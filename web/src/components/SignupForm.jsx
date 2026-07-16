@@ -32,36 +32,38 @@ const SignupForm = ({ variant = 'default' }) => {
     }
   };
 
-  const inputClasses = 'h-12 text-base bg-white text-navy-900 placeholder:text-slate-400';
+  const inputClasses = 'h-14 text-lg bg-white text-navy-900 placeholder:text-slate-400';
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-md">
-      <div className="flex flex-col sm:flex-row gap-3">
+    <form onSubmit={handleSubmit} className="w-full max-w-lg">
+      <div className="flex flex-col gap-3">
         <Input
           type="text"
           placeholder="First name (optional)"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className={cn('sm:w-40', inputClasses)}
+          className={inputClasses}
           autoComplete="given-name"
         />
-        <Input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={cn('flex-1', inputClasses)}
-          autoComplete="email"
-          required
-        />
-        <Button
-          type="submit"
-          variant={variant === 'hero' ? 'accent' : 'primary'}
-          disabled={isLoading}
-          className="h-12 px-8 whitespace-nowrap"
-        >
-          {isLoading ? 'Sending…' : 'Get Free Tips'}
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={cn('flex-1', inputClasses)}
+            autoComplete="email"
+            required
+          />
+          <Button
+            type="submit"
+            variant={variant === 'hero' ? 'accent' : 'primary'}
+            disabled={isLoading}
+            className="h-14 px-8 text-lg whitespace-nowrap"
+          >
+            {isLoading ? 'Sending…' : 'Get Free Tips'}
+          </Button>
+        </div>
       </div>
       <p className={cn('mt-2 text-xs', variant === 'hero' ? 'text-white/70' : 'text-slate-500')}>
         We'll send a few genuinely useful emails — no spam, unsubscribe anytime.

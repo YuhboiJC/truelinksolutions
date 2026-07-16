@@ -33,9 +33,9 @@ const Header = () => {
         scrolled ? 'bg-white/95 backdrop-blur shadow-sm' : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
         <a href="#home" onClick={(e) => { e.preventDefault(); scrollToSection('#home'); }} className="flex items-center gap-2">
-          <img src="/logo.png" alt={SITE.name} className="h-10 w-auto" />
+          <img src="/logo.png" alt={SITE.name} className="h-16 md:h-20 w-auto" />
         </a>
 
         <nav className="hidden md:flex items-center gap-8">
