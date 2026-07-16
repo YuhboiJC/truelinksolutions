@@ -1,0 +1,14 @@
+{
+    "name": "truelinksolutions/api",
+    "description": "PHP signup/email backend for truelinksolutions.com",
+    "type": "project",
+    "require": {
+        "php": ">=8.1",
+        "phpmailer/phpmailer": "^6.9"
+    },
+    "config": {
+        "platform": {
+            "php": "8.1"
+        }
+    }
+}

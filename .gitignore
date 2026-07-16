@@ -1,0 +1,13 @@
+# Real secrets — copy api/config.example.php to api/config.php on the server
+api/config.php
+
+# Local PHP smoke-test artifacts
+api/local-test.sqlite
+
+# Frontend
+web/node_modules/
+web/dist/
+
+# OS/editor cruft
+.DS_Store
+*.log

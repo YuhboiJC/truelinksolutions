@@ -1,0 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Sora:wght@600;700;800&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Sora", ui-sans-serif, system-ui, sans-serif;
+
+  /* Navy - primary brand color, from the Truelink logo */
+  --color-navy-50: #eef4fb;
+  --color-navy-100: #d9e6f5;
+  --color-navy-400: #2e6da8;
+  --color-navy-500: #1a4d85;
+  --color-navy-600: #123a66;
+  --color-navy-700: #0d2c4d;
+  --color-navy-900: #081b30;
+
+  /* Orange - accent brand color, from the Truelink logo */
+  --color-orange-100: #fde8d2;
+  --color-orange-400: #f6a048;
+  --color-orange-500: #f0821f;
+  --color-orange-600: #d76c0f;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--color-navy-900);
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+  }
+}
