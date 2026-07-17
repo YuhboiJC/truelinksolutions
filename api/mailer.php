@@ -99,6 +99,7 @@ function tl_send_mail(string $toEmail, string $subject, string $html): void
     require_once __DIR__ . '/../vendor/autoload.php';
 
     $mailer = new PHPMailer\PHPMailer\PHPMailer(true);
+    $mailer->CharSet = PHPMailer\PHPMailer\PHPMailer::CHARSET_UTF8;
     $mailer->isSMTP();
     $mailer->Host = $mailConfig['host'];
     $mailer->Port = $mailConfig['port'];
