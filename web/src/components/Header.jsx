@@ -3,10 +3,12 @@ import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SITE } from '@/lib/site';
 
+// Order matches the actual top-to-bottom section order on the page, so
+// clicking through the nav always scrolls forward, never backward.
 const NAV_LINKS = [
   { label: 'Services', href: '#services' },
-  { label: 'Results', href: '#portfolio' },
   { label: 'About', href: '#about' },
+  { label: 'Results', href: '#portfolio' },
   { label: 'Reviews', href: '#testimonials' },
 ];
 
@@ -35,7 +37,9 @@ const Header = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
         <a href="#home" onClick={(e) => { e.preventDefault(); scrollToSection('#home'); }} className="flex items-center gap-2">
-          <img src="/logo.png" alt={SITE.name} className="h-16 md:h-20 w-auto" />
+          <div className="bg-white/95 rounded-xl px-3 py-1.5 shadow-sm">
+            <img src="/logo.png" alt={SITE.name} className="h-12 md:h-16 w-auto" />
+          </div>
         </a>
 
         <nav className="hidden md:flex items-center gap-8">

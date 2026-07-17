@@ -10,7 +10,7 @@ const PERKS = [
 ];
 
 const BookCallSection = () => (
-  <section id="book-call" className="relative py-24 md:py-28 bg-navy-700 overflow-hidden">
+  <section id="book-call" className="scroll-mt-24 relative py-24 md:py-28 bg-navy-700 overflow-hidden">
     <div className="absolute -top-24 -right-24 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl" />
     <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <motion.div

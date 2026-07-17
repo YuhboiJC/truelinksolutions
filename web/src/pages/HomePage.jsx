@@ -127,7 +127,7 @@ const HomePage = () => {
       <Header />
 
       <main>
-        <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <section id="home" className="relative min-h-svh flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <img
               src="https://images.unsplash.com/photo-1684395165684-1210bdc81d96"
@@ -169,7 +169,7 @@ const HomePage = () => {
           </div>
         </section>
 
-        <section id="services" className="py-24 md:py-28 bg-white">
+        <section id="services" className="scroll-mt-24 py-24 md:py-28 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -192,7 +192,7 @@ const HomePage = () => {
           </div>
         </section>
 
-        <section id="about" className="relative py-24 overflow-hidden bg-slate-50">
+        <section id="about" className="scroll-mt-24 relative py-24 overflow-hidden bg-slate-50">
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <motion.div
@@ -262,7 +262,7 @@ const HomePage = () => {
           </div>
         </section>
 
-        <section id="portfolio" className="relative py-24 md:py-28 bg-white">
+        <section id="portfolio" className="scroll-mt-24 relative py-24 md:py-28 bg-white">
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -302,7 +302,7 @@ const HomePage = () => {
           </div>
         </section>
 
-        <section id="testimonials" className="py-24 bg-slate-50">
+        <section id="testimonials" className="scroll-mt-24 py-24 bg-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
