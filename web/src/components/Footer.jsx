@@ -52,11 +52,9 @@ const Footer = () => {
 
         <div>
           <h3 className="text-white font-semibold mb-4">Truelink Solutions</h3>
-          {/* CAN-SPAM requires a physical mailing address in commercial email footers.
-              TODO: replace with your real business mailing address (a P.O. box is fine). */}
           <p className="text-sm leading-relaxed">
-            [Your Business Mailing Address Here]<br />
-            {SITE.region}
+            Port Charlotte, Florida<br />
+            Serving {SITE.region}
           </p>
         </div>
       </div>

@@ -9,6 +9,7 @@ const SignupForm = ({ variant = 'default' }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [hp, setHp] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,8 +22,8 @@ const SignupForm = ({ variant = 'default' }) => {
     setIsLoading(true);
 
     try {
-      await signup({ name: name.trim(), email: email.trim() });
-      toast.success("You're in! Check your inbox — your free automation tip is on its way.");
+      const res = await signup({ name: name.trim(), email: email.trim(), company_website: hp });
+      toast.success(res.message || "You're in! Check your inbox — your free automation tip is on its way.");
       setEmail('');
       setName('');
     } catch (error) {
@@ -35,7 +36,18 @@ const SignupForm = ({ variant = 'default' }) => {
   const inputClasses = 'h-14 text-lg bg-white text-navy-900 placeholder:text-slate-400';
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-lg">
+    <form onSubmit={handleSubmit} className="relative w-full max-w-lg">
+      {/* Honeypot: hidden from people, bots fill it in */}
+      <input
+        type="text"
+        name="company_website"
+        value={hp}
+        onChange={(e) => setHp(e.target.value)}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute -left-[9999px] h-0 w-0 opacity-0"
+      />
       <div className="flex flex-col gap-3">
         <Input
           type="text"

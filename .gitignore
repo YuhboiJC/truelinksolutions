@@ -11,3 +11,5 @@ web/dist/
 # OS/editor cruft
 .DS_Store
 *.log
+release/
+node_modules/

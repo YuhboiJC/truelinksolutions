@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Unsubscribe | Truelink Solutions</title>
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <style>
+      body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:#f1f5f9; font-family:'DM Sans',Helvetica,Arial,sans-serif; color:#081b30; padding:16px; box-sizing:border-box; }
+      .card { max-width:420px; width:100%; text-align:center; padding:40px 32px; background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(15,23,42,.08); }
+      img { height:40px; width:auto; margin-bottom:20px; }
+      h1 { font-size:20px; margin:0 0 12px; }
+      p { margin:0; color:#64748b; line-height:1.6; }
+      a { color:#123a66; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <img src="/logo.png" alt="Truelink Solutions" />
+      <h1 id="title">Unsubscribing…</h1>
+      <p id="msg">One moment.</p>
+    </div>
+    <script>
+      (async function () {
+        var token = new URLSearchParams(location.search).get('token') || '';
+        var title = document.getElementById('title');
+        var msg = document.getElementById('msg');
+        try {
+          var res = await fetch('https://zjgxafxajnndfwolvvjs.supabase.co/functions/v1/leads/unsubscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token })
+          });
+          if (!res.ok) throw new Error();
+          title.textContent = "You're unsubscribed";
+          msg.innerHTML = "You won't receive any more emails from Truelink Solutions. If that was a mistake, just reply to any previous email and let us know. <br/><br/><a href='/'>Back to the website</a>";
+        } catch (e) {
+          title.textContent = 'Something went wrong';
+          msg.innerHTML = "We couldn't process that just now. Please email <a href='mailto:info@truelinksolutions.com'>info@truelinksolutions.com</a> and we'll remove you right away.";
+        }
+      })();
+    </script>
+  </body>
+</html>

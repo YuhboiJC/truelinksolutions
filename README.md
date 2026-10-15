@@ -1,39 +1,52 @@
-# Truelink Solutions — truelinksolutions.com
+# Truelink Solutions: website + TrueLink HQ
 
-Marketing site + working signup/email flow for Truelink Solutions, replacing
-the previous Hostinger Horizons build. Static frontend, PHP + MySQL backend —
-built to run entirely on Hostinger's standard shared web hosting.
+| Folder | What it is | Where it runs |
+|---|---|---|
+| `web/` | Marketing site (React + Vite + Tailwind) | Hostinger `public_html/` |
+| `hq/` | **TrueLink HQ** dashboard: contacts, pipeline, invoices | Hostinger `public_html/hq/` → truelinksolutions.com/hq |
+| `supabase/functions/` | Server code (edge functions) | Supabase project `truelinksolutions` |
 
-## Structure
+Everything is stored in **Supabase** (one database). No PHP or MySQL.
 
-- `web/` — React + Vite + Tailwind frontend. `npm run build` produces static
-  files in `web/dist/`.
-- `api/` — PHP backend: signup form handler, welcome/nurture email sequence,
-  unsubscribe endpoint, and the daily cron job that advances the sequence.
-- `schema.sql` — MySQL schema for the `subscribers` table.
-- `composer.json` / `vendor/` — PHPMailer, used to send SMTP email.
-- `DEPLOY.md` — step-by-step checklist to go live on Hostinger.
+## How the pieces connect
+
+- **Website forms** (newsletter signup + "Book a Free Audit") → `leads/capture` edge function →
+  creates/updates a row in `contacts`, logs it in `activities`, sends emails through **Resend**.
+- **Welcome series**: 4 emails (day 0, +2, +3, +4). A `pg_cron` job calls `leads/nurture`
+  every hour; it sends whatever is due and retries failed welcome emails.
+- **Unsubscribe**: `truelinksolutions.com/unsubscribe.html?token=…` → `leads/unsubscribe`.
+- **TrueLink HQ** signs in with Supabase Auth. Row Level Security only lets emails in the
+  `admins` table see data.
+- **Invoices**: HQ → `stripe` edge function creates the Stripe customer + invoice and Stripe
+  emails it. Stripe calls `stripe/webhook` when it's paid/voided, and HQ updates automatically
+  (a paid lead becomes a customer).
+
+## Secrets (Supabase → Edge Functions → Secrets)
+
+- `RESEND_API_KEY`: from resend.com → API Keys
+- `STRIPE_SECRET_KEY`: from Stripe → Developers → API keys (start with the test key `sk_test_…`)
+
+The Stripe webhook secret is created automatically when you click **Turn on payment sync** in
+HQ → Settings.
+
+## Database tables
+
+`contacts`, `activities`, `invoices`, `business_profile` (mailing address, booking link,
+alert email: editable in HQ → Settings), `admins` (who can sign in), `app_settings` (server-only).
+
+## Build & deploy
+
+```bash
+./build.sh          # → release/truelink-site.zip
+```
+Upload `truelink-site.zip` to Hostinger `public_html` and extract it (or ask Claude to deploy it).
+
+Edge functions: deploy `supabase/functions/leads` and `supabase/functions/stripe`
+(both with JWT verification **off**: they check auth themselves).
 
 ## Local development
 
+```bash
+cd web && npm install && npm run dev   # site on :5173
+cd hq  && npm install && npm run dev   # dashboard on :5174
 ```
-cd web
-npm install
-npm run dev
-```
-
-The signup form posts to `/api/signup.php`. To test it locally, run the PHP
-backend alongside the frontend:
-
-```
-php -S localhost:8000 -t api
-```
-
-`api/config.php` (gitignored) holds real credentials in production; for
-local testing it's fine to point `db.dsn` at a local SQLite file and set
-`mail.dry_run` to `true` so emails are logged instead of actually sent — see
-`api/config.example.php` for the production template.
-
-## Deploying
-
-See [`DEPLOY.md`](./DEPLOY.md) for the full Hostinger go-live checklist.

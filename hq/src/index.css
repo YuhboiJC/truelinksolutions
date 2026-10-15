@@ -1,0 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=Sora:wght@600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --color-navy-50: #eef4fb;
+  --color-navy-100: #d9e6f5;
+  --color-navy-400: #2e6da8;
+  --color-navy-500: #1a4d85;
+  --color-navy-600: #123a66;
+  --color-navy-700: #0d2c4d;
+  --color-navy-900: #081b30;
+  --color-orange-100: #fde8d2;
+  --color-orange-400: #f6a048;
+  --color-orange-500: #f0821f;
+  --color-orange-600: #d76c0f;
+}
+
+@layer base {
+  body { margin: 0; font-family: var(--font-sans); color: var(--color-navy-900); background: #f6f8fb; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: var(--font-heading); }
+}
+
+@layer components {
+  .card { @apply bg-white rounded-xl border border-slate-200/80 shadow-[0_1px_2px_rgba(15,23,42,0.04)]; }
+  .input { @apply h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-navy-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/60 focus:border-transparent; }
+  .textarea { @apply w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-navy-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/60 focus:border-transparent; }
+  .label { @apply block text-xs font-medium text-slate-500 mb-1; }
+  .btn { @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 h-9 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed; }
+  .btn-primary { @apply bg-orange-500 text-white hover:bg-orange-600; }
+  .btn-navy { @apply bg-navy-600 text-white hover:bg-navy-700; }
+  .btn-ghost { @apply bg-transparent text-navy-600 hover:bg-navy-50; }
+  .btn-outline { @apply border border-slate-200 bg-white text-navy-700 hover:bg-slate-50; }
+  .btn-danger { @apply border border-red-200 bg-white text-red-600 hover:bg-red-50; }
+}

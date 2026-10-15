@@ -14,10 +14,4 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  server: {
-    proxy: {
-      // Requires `php -S localhost:8000 -t api` running alongside `npm run dev`.
-      '/api': 'http://localhost:8000',
-    },
-  },
 })
