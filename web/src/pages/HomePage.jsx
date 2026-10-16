@@ -50,7 +50,7 @@ const SERVICES = [
   {
     icon: Share2,
     title: 'Social Media, Handled',
-    plain: 'Consistent posts on Facebook, Instagram and more, written for you and scheduled for you. You approve, we post.',
+    plain: 'Consistent posts on Facebook, Instagram and more, written for you and scheduled for you. Review each one first, or let it run on autopilot.',
     tech: 'AI-assisted content calendars, sermon or video to post repurposing, scheduling and monthly performance reporting.',
   },
   {
@@ -202,12 +202,12 @@ const PACKAGES = {
 
 const FAQS = [
   { q: 'Do I need to be good with technology?', a: "No. We set everything up, explain it in plain English, and manage it for you. If you can read a text message, you can use what we build." },
-  { q: 'Will AI say something wrong to my customers?', a: 'Your assistant only answers from information you approve, and it hands tricky questions to a real person. Anything that gets posted or sent in your name goes through your approval first.' },
+  { q: 'Will AI say something wrong to my customers?', a: 'Your assistant only answers from information you approve, and it hands tricky questions to a real person. You decide whether posts and emails wait for your OK or go out automatically, and you can change that any time.' },
   { q: 'Who owns my website, content and contacts?', a: 'You do. Your website, domain, content and customer list are yours, in writing. If you ever leave, you take them with you.' },
   { q: 'Is there a long contract?', a: 'Plans have a 3-month minimum so we can get everything working well, then they are month to month. Cancel any time after that.' },
   { q: 'What does the monthly fee cover?', a: 'Hosting, the tools themselves, monitoring, fixes, updates, the work included in your plan, and a simple monthly report. No surprise invoices.' },
   { q: 'Can you work with the tools I already use?', a: "Usually, yes. We connect to common calendars, email, phone systems, Facebook, Instagram, YouTube and church platforms. We'll check yours on the free audit." },
-  { q: 'Do you only work with churches and businesses in Southwest Florida?', a: "We're based in Port Charlotte and love working locally, from Venice to Fort Myers. We also work with clients anywhere over video calls." },
+  { q: 'Do you only work with churches and businesses in Southwest Florida?', a: "No. We started in Port Charlotte and still meet local clients in person, from Venice to Fort Myers. We're growing across Florida and work with clients anywhere over video calls." },
 ];
 
 const fmt = (n) => n.toLocaleString('en-US');
@@ -579,9 +579,9 @@ const HomePage = () => {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {[
                 { title: 'Plain English, always', text: "No jargon and no runaround. If something doesn't make sense, that's on us to fix." },
-                { title: 'You approve before anything goes live', text: 'Nothing is posted, sent or published in your name without your OK.' },
+                { title: 'You choose how hands-on to be', text: 'Want to approve every post and email first? You can. Rather not think about it? We set it to run on its own in the background, and you just see the results.' },
                 { title: 'You own your stuff', text: 'Your website, domain, content and contact list belong to you, in writing.' },
-                { title: 'A real local person', text: 'You work directly with the founder in Port Charlotte, by phone, text, email or in person.' },
+                { title: 'A real person, not a call center', text: 'You work directly with the founder. We started in Port Charlotte and are growing across Florida, by phone, text, email, video or in person.' },
                 { title: 'Fast replies', text: 'Questions answered within one business day, and urgent issues the same day.' },
                 { title: 'No long contracts', text: 'A 3-month minimum to get everything working well, then month to month.' },
               ].map(({ title, text }, i) => (
