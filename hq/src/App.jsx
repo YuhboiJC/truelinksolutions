@@ -12,6 +12,7 @@ import ContactDetail from '@/pages/ContactDetail';
 import Invoices from '@/pages/Invoices';
 import Settings from '@/pages/Settings';
 import Newsletter from '@/pages/Newsletter';
+import NewsletterIssue from '@/pages/NewsletterIssue';
 import Services from '@/pages/Services';
 import Testimonials from '@/pages/Testimonials';
 
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="invoices" element={<Invoices />} />
             <Route path="testimonials" element={<Testimonials />} />
             <Route path="newsletter" element={<Newsletter />} />
+            <Route path="newsletter/:id" element={<NewsletterIssue />} />
             <Route path="settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

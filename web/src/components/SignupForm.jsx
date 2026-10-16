@@ -40,11 +40,15 @@ const SignupForm = ({ variant = 'default' }) => {
       {/* Honeypot: hidden from people, bots fill it in */}
       <input
         type="text"
-        name="company_website"
+        name="tl_hp_field"
+                data-lpignore="true"
+                data-1p-ignore="true"
+                data-bwignore="true"
+                data-form-type="other"
         value={hp}
         onChange={(e) => setHp(e.target.value)}
         tabIndex={-1}
-        autoComplete="off"
+        autoComplete="nope"
         aria-hidden="true"
         className="absolute -left-[9999px] h-0 w-0 opacity-0"
       />

@@ -1,5 +1,5 @@
 // TrueLink AI Weekly distribution.
-// Substack is the source of truth: when Josh publishes a post there, the hourly
+// Substack is the source of truth: when Josh publishes a post there, the 10-minute
 // poll picks it up from the public RSS feed and emails it to everyone on the
 // website list who isn't already a Substack subscriber.
 import { XMLParser } from "npm:fast-xml-parser@4.5.0";
@@ -108,13 +108,17 @@ async function resendKey(): Promise<string> {
   return key;
 }
 
-async function postBatch(key: string, emails: unknown[], idempotencyKey: string) {
+/** Sends up to 100 emails; returns Resend's email ids in the same order. */
+async function postBatch(key: string, emails: unknown[], idempotencyKey: string): Promise<(string | null)[]> {
   const res = await fetch("https://api.resend.com/emails/batch", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json", "Idempotency-Key": idempotencyKey },
     body: JSON.stringify(emails),
   });
   if (!res.ok) throw new Error(`Resend ${res.status}: ${await res.text()}`);
+  const out = await res.json().catch(() => ({}));
+  const ids = Array.isArray(out?.data) ? out.data.map((d: { id?: string }) => d?.id ?? null) : [];
+  return emails.map((_, i) => ids[i] ?? null);
 }
 
 /** Sends (or resumes sending) one issue to everyone in the audience who hasn't received it yet. */
@@ -133,7 +137,7 @@ async function sendIssue(issue: Issue, profile: BusinessProfile) {
   try {
     for (let i = 0; i < todo.length; i += BATCH) {
       const chunk = todo.slice(i, i + BATCH);
-      await postBatch(key, chunk.map((c) => ({
+      const ids = await postBatch(key, chunk.map((c) => ({
         from: FROM,
         to: [c.email],
         reply_to: "info@truelinksolutions.com",
@@ -141,11 +145,13 @@ async function sendIssue(issue: Issue, profile: BusinessProfile) {
         html: issueEmail(issue, profile, c.unsubscribe_token),
         headers: { "List-Unsubscribe": `<${unsubscribeUrl(c.unsubscribe_token)}>` },
       })), `${issue.id}-${chunk[0].id}-${chunk.length}`);
-      await admin.from("newsletter_sends").insert(chunk.map((c) => ({ issue_id: issue.id, contact_id: c.id })));
+      await admin.from("newsletter_sends").insert(chunk.map((c, j) => ({
+        issue_id: issue.id, contact_id: c.id, email: c.email, resend_id: ids[j],
+      })));
       sent += chunk.length;
     }
   } catch (e) {
-    // Most likely the daily email limit. Leave it as "sending"; the next hourly run picks up where it stopped.
+    // Most likely the daily email limit. Leave it as "sending"; the next run picks up where it stopped.
     const msg = (e as Error).message;
     await admin.from("newsletter_issues").update({ last_error: msg }).eq("id", issue.id);
     const { count } = await admin.from("newsletter_sends").select("*", { count: "exact", head: true }).eq("issue_id", issue.id);
@@ -170,12 +176,58 @@ async function runPoll(profile: BusinessProfile) {
   return { imported, results };
 }
 
+// ---------- Delivery tracking (Resend webhook) ----------
+
+const TRACKED = new Set(["email.delivered", "email.opened", "email.clicked", "email.bounced", "email.complained"]);
+
+function b64(bytes: ArrayBuffer): string {
+  return btoa(String.fromCharCode(...new Uint8Array(bytes)));
+}
+
+/** Verifies Resend's (Svix) webhook signature so nobody can fake opens or clicks. */
+async function verifySvix(req: Request, body: string): Promise<boolean> {
+  const secret = await getSetting("resend_webhook_secret");
+  const id = req.headers.get("svix-id"), ts = req.headers.get("svix-timestamp"), sigs = req.headers.get("svix-signature");
+  if (!secret || !id || !ts || !sigs) return false;
+  if (Math.abs(Date.now() / 1000 - Number(ts)) > 300) return false;
+  const raw = Uint8Array.from(atob(secret.replace(/^whsec_/, "")), (c) => c.charCodeAt(0));
+  const key = await crypto.subtle.importKey("raw", raw, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const expected = b64(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`${id}.${ts}.${body}`)));
+  return sigs.split(" ").some((s) => s.split(",")[1] === expected);
+}
+
+async function handleResendWebhook(req: Request): Promise<Response> {
+  const body = await req.text();
+  if (!(await verifySvix(req, body))) return new Response("invalid signature", { status: 401 });
+  let evt: { type?: string; created_at?: string; data?: { email_id?: string; created_at?: string; click?: { link?: string } } };
+  try {
+    evt = JSON.parse(body);
+  } catch {
+    return new Response("bad json", { status: 400 });
+  }
+  if (evt.type && TRACKED.has(evt.type) && evt.data?.email_id) {
+    const { error } = await admin.rpc("apply_newsletter_event", {
+      p_resend_id: evt.data.email_id,
+      p_type: evt.type,
+      p_at: evt.created_at ?? evt.data.created_at ?? new Date().toISOString(),
+      p_link: evt.data.click?.link?.slice(0, 500) ?? null,
+    });
+    if (error) {
+      console.error("apply_newsletter_event", error);
+      return new Response("error", { status: 500 });
+    }
+  }
+  return new Response("ok");
+}
+
 // ---------- HTTP ----------
 
 export async function handleNewsletter(req: Request): Promise<Response> {
   const pre = preflight(req);
   if (pre) return pre;
   const path = new URL(req.url).pathname.replace(/\/+$/, "");
+
+  if (path.endsWith("/resend-webhook")) return handleResendWebhook(req);
 
   if (path.endsWith("/poll")) {
     const secret = await getSetting("cron_secret");
