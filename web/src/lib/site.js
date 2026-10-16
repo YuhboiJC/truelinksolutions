@@ -3,7 +3,7 @@
 // Calendly link + mailing address from the business_profile table, which you
 // can edit in TrueLink HQ → Settings.
 export const SITE = {
-  name: 'Truelink Solutions',
+  name: 'TrueLink Solutions',
   founder: 'Josh McLaughlin',
   email: 'info@truelinksolutions.com',
   phone: '(941) 840-3649',

@@ -63,7 +63,7 @@ const BookCallSection = () => {
             Free 15-Minute Automation Audit
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Get a second pair of eyes on your business
+            Get a second pair of eyes on your business or ministry
           </h2>
           <p className="text-lg text-white/80 mb-8 leading-relaxed">
             Book a free, no-pressure 15-minute call. We'll look at where you're losing time to repetitive

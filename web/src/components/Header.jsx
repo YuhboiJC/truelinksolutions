@@ -7,9 +7,10 @@ import { SITE } from '@/lib/site';
 // clicking through the nav always scrolls forward, never backward.
 const NAV_LINKS = [
   { label: 'Services', href: '#services' },
+  { label: 'How It Works', href: '#how' },
+  { label: 'Packages', href: '#packages' },
   { label: 'About', href: '#about' },
-  { label: 'Results', href: '#portfolio' },
-  { label: 'Reviews', href: '#testimonials' },
+  { label: 'FAQ', href: '#faq' },
 ];
 
 const Header = () => {

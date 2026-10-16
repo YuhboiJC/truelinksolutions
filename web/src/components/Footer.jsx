@@ -11,8 +11,8 @@ const Footer = () => {
         <div>
           <img src="/logo.png" alt={SITE.name} className="h-10 w-auto mb-4 brightness-0 invert" />
           <p className="text-sm leading-relaxed max-w-xs">
-            AI automation and digital presence for {SITE.region} service businesses — built by a small
-            business owner, for small business owners.
+            AI automation, websites and social media for {SITE.region} businesses and churches, built and
+            managed by a local small business owner.
           </p>
         </div>
 
@@ -51,7 +51,7 @@ const Footer = () => {
         </div>
 
         <div>
-          <h3 className="text-white font-semibold mb-4">Truelink Solutions</h3>
+          <h3 className="text-white font-semibold mb-4">{SITE.name}</h3>
           <p className="text-sm leading-relaxed">
             Port Charlotte, Florida<br />
             Serving {SITE.region}
