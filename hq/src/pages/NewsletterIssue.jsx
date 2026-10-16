@@ -136,7 +136,7 @@ export default function NewsletterIssue() {
                       <td className="px-4 py-3 text-slate-600">
                         {(r.clicked_links ?? []).length ? (
                           <ul className="space-y-0.5">
-                            {r.clicked_links.map((l) => <li key={l} className="text-xs truncate max-w-[220px]" title={l}>{shortLink(l)}</li>)}
+                            {r.clicked_links.map((l) => <li key={l} className="text-xs truncate max-w-[170px]" title={l}>{shortLink(l)}</li>)}
                           </ul>
                         ) : '–'}
                       </td>
