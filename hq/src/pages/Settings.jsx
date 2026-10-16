@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle2, CircleAlert } from 'lucide-react';
 import { toast } from 'sonner';
-import { stripeAction, supabase } from '@/lib/supabase';
+import { opsAction, stripeAction, supabase } from '@/lib/supabase';
+import { dateTime } from '@/lib/format';
 import { PageHeader, Spinner } from '@/components/ui';
 
 function Check({ ok, title, children }) {
@@ -41,8 +42,28 @@ export default function Settings() {
     }
   };
 
+  const [ops, setOps] = useState(null);
+  const [hToken, setHToken] = useState('');
+  const [savingH, setSavingH] = useState(false);
+  const loadOps = () => opsAction('status').then(setOps).catch(() => setOps({}));
+  const saveHostinger = async (e) => {
+    e.preventDefault();
+    setSavingH(true);
+    try {
+      const r = await opsAction('save_hostinger_token', { token: hToken });
+      setHToken('');
+      toast.success(`Hostinger connected: ${r.added} added, ${r.updated} updated under Services`);
+      loadOps();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setSavingH(false);
+    }
+  };
+
   const loadStatus = () => stripeAction('status').then(setStatus).catch((e) => setStatus({ error: e.message }));
   useEffect(() => {
+    loadOps();
     supabase.from('business_profile').select('*').single().then(({ data }) => setProfile(data));
     loadStatus();
   }, []);
@@ -110,8 +131,19 @@ export default function Settings() {
                 )}
               </Check>
               {status.webhook && (
-                <div className="pt-3"><button className="btn btn-outline" onClick={connectWebhook} disabled={connecting}>Reconnect payment sync</button></div>
+                <div className="py-3"><button className="btn btn-outline" onClick={connectWebhook} disabled={connecting}>Reconnect payment sync</button></div>
               )}
+              <Check ok={!!ops?.hostinger} title="Hostinger (hosting + domains)">
+                {ops?.hostinger ? (
+                  <p>Renewal dates and prices sync into Services every morning{ops.last_sync ? ` (last: ${dateTime(ops.last_sync)})` : ''}.</p>
+                ) : (
+                  <form onSubmit={saveHostinger} className="mt-1 space-y-2">
+                    <p>Keeps your Hostinger plans and domains up to date under Services automatically. In hPanel, open <strong>Dev tools → API → API tokens</strong>, click <strong>New token</strong> (pick the longest expiration), and paste it here. It's stored on the server and never shown again.</p>
+                    <input className="input font-mono" type="password" autoComplete="off" placeholder="Hostinger API token" value={hToken} onChange={(e) => setHToken(e.target.value)} />
+                    <button className="btn btn-navy" disabled={savingH || !hToken.trim()}>{savingH ? 'Checking…' : 'Connect Hostinger'}</button>
+                  </form>
+                )}
+              </Check>
             </div>
           )}
         </section>

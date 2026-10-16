@@ -37,3 +37,14 @@ export function signup({ name, email, company_website = '' }) {
 export function requestAudit({ name, email, phone, business_name, message, company_website = '' }) {
   return post('/leads/capture', { type: 'audit', name, email, phone, business_name, message, company_website });
 }
+
+/** Published testimonials (managed in TrueLink HQ → Testimonials). */
+export async function getTestimonials() {
+  try {
+    const res = await fetch(`${FUNCTIONS_URL}/ops/testimonials`);
+    const data = await res.json();
+    return data?.ok ? data.testimonials : [];
+  } catch {
+    return [];
+  }
+}

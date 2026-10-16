@@ -6,6 +6,9 @@ import { supabase, stripeAction } from '@/lib/supabase';
 import { SOURCE, STATUSES, date, dateTime, displayName, dollars, money } from '@/lib/format';
 import ContactForm from '@/components/ContactForm';
 import InvoiceForm from '@/components/InvoiceForm';
+import ServiceForm from '@/components/ServiceForm';
+import ServiceRows from '@/components/ServiceRows';
+import { CATEGORY, perMonth } from '@/lib/services';
 import { Empty, InvoiceBadge, Spinner, StatusBadge } from '@/components/ui';
 
 const ACTIVITY_TYPES = [
@@ -22,17 +25,21 @@ export default function ContactDetail() {
   const [c, setC] = useState(null);
   const [activities, setActivities] = useState([]);
   const [invoices, setInvoices] = useState([]);
+  const [services, setServices] = useState([]);
+  const [serviceEdit, setServiceEdit] = useState(null);
   const [editing, setEditing] = useState(false);
   const [invoicing, setInvoicing] = useState(false);
   const [note, setNote] = useState('');
   const [noteType, setNoteType] = useState('note');
 
   const load = useCallback(async () => {
-    const [{ data: contact }, { data: acts }, { data: invs }] = await Promise.all([
+    const [{ data: contact }, { data: acts }, { data: invs }, { data: svcs }] = await Promise.all([
       supabase.from('contacts').select('*').eq('id', id).maybeSingle(),
       supabase.from('activities').select('*').eq('contact_id', id).order('created_at', { ascending: false }),
       supabase.from('invoices').select('*').eq('contact_id', id).order('created_at', { ascending: false }),
+      supabase.from('services').select('*').eq('contact_id', id).order('category').order('name'),
     ]);
+    setServices(svcs ?? []);
     setC(contact ?? false);
     setActivities(acts ?? []);
     setInvoices(invs ?? []);
@@ -79,7 +86,10 @@ export default function ContactDetail() {
   const billed = invoices.filter((i) => i.status === 'paid').reduce((s, i) => s + i.amount_paid, 0);
   const nurtureLabel = !c.subscribed
     ? c.unsubscribed_at ? `Unsubscribed ${date(c.unsubscribed_at)}` : 'Not on email list'
-    : c.nurture_step >= 4 ? 'Finished welcome series' : `Welcome series: email ${c.nurture_step} of 4 sent`;
+    : c.nurture_step >= 1 ? 'Welcome email sent' : 'On email list';
+  const liveServices = services.filter((s) => s.status !== 'cancelled');
+  const managedMonthly = liveServices.reduce((t, s) => t + perMonth(s.client_price, s.billing_cycle), 0);
+  const managedTypes = [...new Set(liveServices.map((s) => CATEGORY[s.category]?.label ?? 'Other'))];
 
   return (
     <>
@@ -93,7 +103,7 @@ export default function ContactDetail() {
           </div>
           {c.business_name && c.name && <p className="text-slate-600">{c.business_name}</p>}
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm text-slate-500">
-            <a href={`mailto:${c.email}`} className="inline-flex items-center gap-1 hover:text-orange-600"><Mail className="w-4 h-4" />{c.email}</a>
+            {c.email && <a href={`mailto:${c.email}`} className="inline-flex items-center gap-1 hover:text-orange-600"><Mail className="w-4 h-4" />{c.email}</a>}
             {c.phone && <a href={`tel:${c.phone}`} className="inline-flex items-center gap-1 hover:text-orange-600"><Phone className="w-4 h-4" />{c.phone}</a>}
             {c.website && <a href={c.website.startsWith('http') ? c.website : `https://${c.website}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-orange-600"><ExternalLink className="w-4 h-4" />{c.website}</a>}
           </div>
@@ -148,6 +158,21 @@ export default function ContactDetail() {
         </div>
 
         <div className="lg:col-span-2 space-y-6">
+          <section className="card overflow-hidden">
+            <div className="flex items-center justify-between px-5 pt-4 pb-3">
+              <div>
+                <h2 className="text-sm font-semibold">What we manage</h2>
+                {liveServices.length > 0 && (
+                  <p className="text-xs text-slate-500 mt-0.5">{managedTypes.join(' · ')}{managedMonthly > 0 ? ` · ${dollars(managedMonthly)}/mo billed` : ''}</p>
+                )}
+              </div>
+              <button className="btn btn-ghost px-2" onClick={() => setServiceEdit({})}><Plus className="w-4 h-4" />Add</button>
+            </div>
+            {services.length === 0 ? (
+              <Empty title="Nothing tracked yet">Add their website, domain, hosting, AI agents or newsletter to see renewals and costs in one place.</Empty>
+            ) : <ServiceRows services={services} onEdit={setServiceEdit} />}
+          </section>
+
           <section className="card">
             <div className="flex items-center justify-between px-5 pt-4 pb-3">
               <h2 className="text-sm font-semibold">Invoices</h2>
@@ -215,6 +240,7 @@ export default function ContactDetail() {
       </div>
 
       {editing && <ContactForm contact={c} onClose={() => setEditing(false)} onSaved={load} />}
+      {serviceEdit && <ServiceForm service={serviceEdit.id ? serviceEdit : null} contactId={id} onClose={() => setServiceEdit(null)} onSaved={load} />}
       {invoicing && <InvoiceForm contact={c} onClose={() => setInvoicing(false)} onCreated={load} />}
     </>
   );

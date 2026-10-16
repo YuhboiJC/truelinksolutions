@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlarmClock, CircleDollarSign, Inbox, UserPlus, Users } from 'lucide-react';
+import { AlarmClock, CalendarClock, CircleDollarSign, Inbox, RefreshCw, TriangleAlert, UserPlus, Users } from 'lucide-react';
+import { renewalInfo } from '@/lib/services';
 import { supabase } from '@/lib/supabase';
 import { date, dateTime, displayName, money, today } from '@/lib/format';
 import { Empty, PageHeader, Spinner, StatusBadge } from '@/components/ui';
@@ -23,11 +24,13 @@ export default function Overview() {
     (async () => {
       const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0);
       const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
-      const [contacts, invoices, followUps, activity] = await Promise.all([
+      const horizon = new Date(Date.now() + 60 * 86400000).toISOString().slice(0, 10);
+      const [contacts, invoices, followUps, activity, renewals] = await Promise.all([
         supabase.from('contacts').select('id,status,created_at,subscribed'),
         supabase.from('invoices').select('status,amount_due,amount_paid,paid_at'),
         supabase.from('contacts').select('id,name,email,business_name,status,next_follow_up').lte('next_follow_up', today()).not('status', 'in', '(lost,past)').order('next_follow_up').limit(8),
         supabase.from('activities').select('id,type,body,created_at,contact:contacts(id,name,email,business_name)').order('created_at', { ascending: false }).limit(12),
+        supabase.from('services').select('id,name,renews_on,auto_renew,account_owner,provider,contact:contacts(id,name,email,business_name)').neq('status', 'cancelled').not('renews_on', 'is', null).lte('renews_on', horizon).order('renews_on').limit(8),
       ]);
       const c = contacts.data ?? [];
       const inv = invoices.data ?? [];
@@ -41,6 +44,7 @@ export default function Overview() {
         paidMonth: inv.filter((x) => x.status === 'paid' && x.paid_at && new Date(x.paid_at) >= monthStart).reduce((s, x) => s + x.amount_paid, 0),
         followUps: followUps.data ?? [],
         activity: activity.data ?? [],
+        renewals: renewals.data ?? [],
       });
     })();
   }, []);
@@ -57,7 +61,7 @@ export default function Overview() {
         <Stat icon={CircleDollarSign} label="Paid this month" value={money(data.paidMonth)} to="/invoices" />
       </div>
 
-      <div className="grid lg:grid-cols-5 gap-6">
+      <div className="grid lg:grid-cols-5 gap-6 items-start">
         <section className="card lg:col-span-2">
           <h2 className="px-5 pt-4 pb-3 text-sm font-semibold flex items-center gap-2"><AlarmClock className="w-4 h-4 text-orange-500" />Follow up today</h2>
           {data.followUps.length === 0 ? (
@@ -81,7 +85,37 @@ export default function Overview() {
           )}
         </section>
 
-        <section className="card lg:col-span-3">
+        <section className="card lg:col-span-2">
+          <div className="flex items-center justify-between px-5 pt-4 pb-3">
+            <h2 className="text-sm font-semibold flex items-center gap-2"><CalendarClock className="w-4 h-4 text-orange-500" />Renewals (next 60 days)</h2>
+            <Link to="/services" className="text-xs text-slate-500 hover:text-orange-600">All services</Link>
+          </div>
+          {data.renewals.length === 0 ? (
+            <Empty title="Nothing renewing soon">Hosting, domains and plans you track under Services show up here.</Empty>
+          ) : (
+            <ul className="divide-y divide-slate-100">
+              {data.renewals.map((s) => {
+                const r = renewalInfo(s);
+                return (
+                  <li key={s.id}>
+                    <Link to={s.contact ? `/contacts/${s.contact.id}` : '/services'} className="flex items-center justify-between gap-3 px-5 py-3 hover:bg-slate-50">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium truncate">{s.name}</p>
+                        <p className="text-xs text-slate-500 truncate">{s.contact ? displayName(s.contact) : 'TrueLink'}{s.provider ? ` · ${s.provider}` : ''}</p>
+                      </div>
+                      <span className={`text-xs shrink-0 inline-flex items-center gap-1 ${r.tone}`}>
+                        {r.needsAction ? <TriangleAlert className="w-3.5 h-3.5" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                        {r.label ?? date(s.renews_on)}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+
+        <section className="card lg:col-span-3 lg:row-span-2">
           <h2 className="px-5 pt-4 pb-3 text-sm font-semibold">Recent activity</h2>
           {data.activity.length === 0 ? (
             <Empty title="No activity yet">New sign-ups and audit requests from the website will show up here.</Empty>

@@ -27,3 +27,4 @@ async function callFunction(name, action, payload = {}) {
 
 export const stripeAction = (action, payload) => callFunction('stripe', action, payload);
 export const newsletterAction = (action, payload) => callFunction('newsletter', action, payload);
+export const opsAction = (action, payload) => callFunction('ops', action, payload);

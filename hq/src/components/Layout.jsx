@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { Columns3, FileText, LayoutDashboard, LogOut, Newspaper, Settings, Users } from 'lucide-react';
+import { Columns3, FileText, LayoutDashboard, LogOut, Newspaper, Quote, Server, Settings, Users } from 'lucide-react';
 import clsx from 'clsx';
 import { supabase } from '@/lib/supabase';
 
@@ -7,8 +7,10 @@ const NAV = [
   { to: '/', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/pipeline', label: 'Pipeline', icon: Columns3 },
   { to: '/contacts', label: 'Contacts', icon: Users },
+  { to: '/services', label: 'Services', icon: Server },
   { to: '/invoices', label: 'Invoices', icon: FileText },
   { to: '/newsletter', label: 'Newsletter', icon: Newspaper },
+  { to: '/testimonials', label: 'Testimonials', icon: Quote },
   { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -25,7 +27,7 @@ export default function Layout({ email }) {
           <div className="bg-white rounded-lg p-1"><img src="/logo.png" alt="" className="h-7 w-auto" /></div>
           <div>
             <p className="font-heading font-bold leading-tight">TrueLink HQ</p>
-            <p className="text-[11px] text-white/50">Customers · Leads · Invoices</p>
+            <p className="text-[11px] text-white/50">Customers · Services · Invoices</p>
           </div>
         </div>
         <nav className="px-3 space-y-1 flex-1">

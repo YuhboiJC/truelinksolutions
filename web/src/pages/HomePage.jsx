@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowDown, Bot, CalendarCheck, Check, Church, Clock, Globe, HeartHandshake, MessageSquareText,
-  PhoneCall, PhoneMissed, Repeat, Share2, Sparkles, Store, UserX, Workflow, ChevronDown,
+  PhoneCall, PhoneMissed, Quote, Repeat, Share2, Sparkles, Store, UserX, Workflow, ChevronDown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { GithubIcon, LinkedinIcon } from '@/components/icons/BrandIcons.jsx';
@@ -12,6 +12,7 @@ import SignupForm from '@/components/SignupForm.jsx';
 import BookCallSection from '@/components/BookCallSection.jsx';
 import { SITE } from '@/lib/site';
 import { cn } from '@/lib/utils';
+import { getTestimonials } from '@/lib/api';
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
@@ -327,7 +328,36 @@ function Faq() {
   );
 }
 
+function Testimonials({ items }) {
+  if (!items.length) return null;
+  return (
+    <section id="testimonials" className="scroll-mt-24 py-24 bg-slate-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div {...fadeUp} className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-4">In their words</h2>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">What the people we work with say about TrueLink.</p>
+        </motion.div>
+        <div className={cn('grid gap-6', items.length > 1 && 'md:grid-cols-2', items.length > 2 && 'lg:grid-cols-3')}>
+          {items.map((t) => (
+            <motion.figure key={t.id} {...fadeUp} className={cn('bg-white rounded-2xl border border-slate-200 p-8 shadow-sm', items.length === 1 && 'max-w-3xl mx-auto')}>
+              <Quote className="w-8 h-8 text-orange-500 mb-4" />
+              <blockquote className="text-lg text-navy-900 leading-relaxed whitespace-pre-line">{t.quote}</blockquote>
+              <figcaption className="mt-6">
+                <p className="font-semibold text-navy-900">{t.author_name}</p>
+                <p className="text-sm text-slate-500">{[t.author_role, t.organization].filter(Boolean).join(', ')}</p>
+              </figcaption>
+            </motion.figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 const HomePage = () => {
+  const [testimonials, setTestimonials] = useState([]);
+  useEffect(() => { getTestimonials().then(setTestimonials); }, []);
+
   return (
     <>
       <Header />
@@ -502,11 +532,11 @@ const HomePage = () => {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
             <motion.div {...fadeUp}>
               <p className="text-orange-600 font-semibold mb-3">Featured project</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-5">A two-campus church, running on one connected system</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-5">Healer's House Family Church: two campuses, one connected system</h2>
               <p className="text-slate-600 leading-relaxed mb-4">
-                We're finishing a full Legacy-level build for a growing church here in Southwest Florida. Their small
-                volunteer team was doing everything by hand: livestreams, the website, social posts, newsletters and
-                scheduling for weekly prayer appointments.
+                Healer's House Family Church, with campuses in Port Charlotte and Punta Gorda, was our first client. We're
+                finishing a full Legacy-level build for them. Their small volunteer team was doing everything by hand:
+                livestreams, the website, social posts, newsletters and scheduling for weekly healing room appointments.
               </p>
               <p className="text-slate-600 leading-relaxed">
                 Now each Sunday message becomes a week of posts, notes and a newsletter, ready for their approval.
@@ -527,10 +557,14 @@ const HomePage = () => {
                   <li key={p} className="flex gap-2.5 text-slate-700"><Check className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />{p}</li>
                 ))}
               </ul>
-              <p className="mt-6 text-sm text-slate-500 italic">Their review is coming soon, straight from the church.</p>
+              {testimonials.length === 0 && (
+                <p className="mt-6 text-sm text-slate-500 italic">Their review is coming soon, straight from the church.</p>
+              )}
             </motion.div>
           </div>
         </section>
+
+        <Testimonials items={testimonials} />
 
         {/* About */}
         <section id="about" className="scroll-mt-24 py-24 bg-slate-50">

@@ -12,6 +12,8 @@ import ContactDetail from '@/pages/ContactDetail';
 import Invoices from '@/pages/Invoices';
 import Settings from '@/pages/Settings';
 import Newsletter from '@/pages/Newsletter';
+import Services from '@/pages/Services';
+import Testimonials from '@/pages/Testimonials';
 
 export default function App() {
   const [session, setSession] = useState(undefined);
@@ -40,7 +42,9 @@ export default function App() {
             <Route path="pipeline" element={<Pipeline />} />
             <Route path="contacts" element={<Contacts />} />
             <Route path="contacts/:id" element={<ContactDetail />} />
+            <Route path="services" element={<Services />} />
             <Route path="invoices" element={<Invoices />} />
+            <Route path="testimonials" element={<Testimonials />} />
             <Route path="newsletter" element={<Newsletter />} />
             <Route path="settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/" replace />} />
