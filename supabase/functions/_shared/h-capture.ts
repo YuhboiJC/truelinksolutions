@@ -86,8 +86,8 @@ export async function handleCapture(req: Request): Promise<Response> {
       ok: true,
       alreadySubscribed: !!existing && !newlySubscribed,
       message: newlySubscribed
-        ? "You're in! Check your inbox — your welcome email is on its way."
-        : "Looks like you're already signed up — check your inbox for our last email!",
+        ? "You're in! Check your inbox for your welcome email to TrueLink AI Weekly."
+        : "You're already on the list. Watch your inbox on Friday!",
     });
   }
 

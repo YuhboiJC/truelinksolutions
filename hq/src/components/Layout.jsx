@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { Columns3, FileText, LayoutDashboard, LogOut, Settings, Users } from 'lucide-react';
+import { Columns3, FileText, LayoutDashboard, LogOut, Newspaper, Settings, Users } from 'lucide-react';
 import clsx from 'clsx';
 import { supabase } from '@/lib/supabase';
 
@@ -8,6 +8,7 @@ const NAV = [
   { to: '/pipeline', label: 'Pipeline', icon: Columns3 },
   { to: '/contacts', label: 'Contacts', icon: Users },
   { to: '/invoices', label: 'Invoices', icon: FileText },
+  { to: '/newsletter', label: 'Newsletter', icon: Newspaper },
   { to: '/settings', label: 'Settings', icon: Settings },
 ];
 

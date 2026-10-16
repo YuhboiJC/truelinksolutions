@@ -9,7 +9,7 @@ export async function sendNurtureStep(contact: NurtureContact, step: number, pro
   if (!tpl) return false;
   const html = layout({
     preheader: tpl.preheader,
-    body: tpl.body(contact.name, profile.calendly_url),
+    body: tpl.body(contact.name, profile.calendly_url, `${profile.substack_url.replace(/\/$/, "")}/archive`),
     profile,
     unsubscribeToken: contact.unsubscribe_token,
   });

@@ -23,7 +23,7 @@ const SignupForm = ({ variant = 'default' }) => {
 
     try {
       const res = await signup({ name: name.trim(), email: email.trim(), company_website: hp });
-      toast.success(res.message || "You're in! Check your inbox — your free automation tip is on its way.");
+      toast.success(res.message || "You're in! Check your inbox for your welcome email.");
       setEmail('');
       setName('');
     } catch (error) {
@@ -78,7 +78,7 @@ const SignupForm = ({ variant = 'default' }) => {
         </div>
       </div>
       <p className={cn('mt-2 text-xs', variant === 'hero' ? 'text-white/70' : 'text-slate-500')}>
-        We'll send a few genuinely useful emails — no spam, unsubscribe anytime.
+        Free weekly AI tips every Friday. No spam, unsubscribe anytime.
       </p>
     </form>
   );

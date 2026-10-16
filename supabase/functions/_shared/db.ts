@@ -21,6 +21,9 @@ export type BusinessProfile = {
   mailing_address: string | null;
   calendly_url: string;
   notify_email: string;
+  substack_url: string;
+  newsletter_auto_send: boolean;
+  newsletter_start_at: string;
 };
 
 export async function getProfile(): Promise<BusinessProfile> {

@@ -11,6 +11,7 @@ import Contacts from '@/pages/Contacts';
 import ContactDetail from '@/pages/ContactDetail';
 import Invoices from '@/pages/Invoices';
 import Settings from '@/pages/Settings';
+import Newsletter from '@/pages/Newsletter';
 
 export default function App() {
   const [session, setSession] = useState(undefined);
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="contacts" element={<Contacts />} />
             <Route path="contacts/:id" element={<ContactDetail />} />
             <Route path="invoices" element={<Invoices />} />
+            <Route path="newsletter" element={<Newsletter />} />
             <Route path="settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

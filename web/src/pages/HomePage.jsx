@@ -290,10 +290,11 @@ const HomePage = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-center mt-20"
             >
-              <p className="text-lg font-medium text-navy-900 mb-2">Ready to transform your business?</p>
+              <p className="text-lg font-medium text-navy-900 mb-2">Get TrueLink AI Weekly, free</p>
               <p className="text-slate-600 mb-6 max-w-xl mx-auto">
-                Drop your email below and we'll send over a quick automation idea you can use right
-                away — plus a few more over the following weeks.
+                One email every Friday: the AI news that matters, a heads up on new scams, and one
+                practical tip you can try in about ten minutes. Written in plain English by a local
+                small business owner.
               </p>
               <div className="flex justify-center">
                 <SignupForm />

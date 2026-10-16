@@ -50,3 +50,13 @@ Edge functions: deploy `supabase/functions/leads` and `supabase/functions/stripe
 cd web && npm install && npm run dev   # site on :5173
 cd hq  && npm install && npm run dev   # dashboard on :5174
 ```
+
+## TrueLink AI Weekly (newsletter)
+
+- Website "Get Free Tips" → `leads/capture` → contact with `subscribed = true` → welcome email ("You're in! Welcome to TrueLink AI Weekly").
+- Josh publishes each issue on Substack. A `pg_cron` job calls `newsletter/poll` every hour (:20): it reads
+  `https://truelinksolutions.substack.com/feed`, saves new posts in `newsletter_issues`, and (if auto-send is on)
+  emails them through Resend's batch API to the `newsletter_audience` view: subscribed website contacts minus
+  anyone in `substack_subscribers` (uploaded from Substack's subscriber export in HQ → Newsletter).
+- `newsletter_sends` records who got what, so a send that hits the daily email limit simply resumes next hour.
+- Resend free plan: 100 emails/day, 3,000/month. Upgrade to Pro once the list is near 100 people.
