@@ -536,9 +536,14 @@ const HomePage = () => {
         <section id="about" className="scroll-mt-24 py-24 bg-slate-50">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div {...fadeUp} className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden md:flex">
-              <div className="md:w-2/5 bg-navy-600 flex items-center justify-center p-10">
-                {/* TODO: replace with a real photo of Josh: <img src="/josh.jpg" alt="Josh McLaughlin" className="w-full h-full object-cover" /> */}
-                <div className="w-40 h-40 rounded-full bg-white/10 border-4 border-white/20 flex items-center justify-center text-5xl font-bold text-white">JM</div>
+              <div className="md:w-2/5 bg-slate-100 h-80 md:h-auto">
+                {/* Photo from Josh's GitHub profile. Swap for a professional headshot later (e.g. /josh.jpg). */}
+                <img
+                  src="https://avatars.githubusercontent.com/u/86496695?s=600&v=4"
+                  alt="Josh McLaughlin"
+                  className="w-full h-full object-cover object-top"
+                  loading="lazy"
+                />
               </div>
               <div className="p-8 md:p-10 md:w-3/5">
                 <p className="text-orange-600 font-semibold mb-2">Who you'll work with</p>
@@ -559,6 +564,34 @@ const HomePage = () => {
                 </div>
               </div>
             </motion.div>
+          </div>
+        </section>
+
+        {/* Our promise */}
+        <section id="promise" className="scroll-mt-24 py-24 bg-white">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div {...fadeUp} className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-4">Our promise to every client</h2>
+              <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                We're a young company, so instead of a wall of logos, here's exactly what you can hold us to.
+              </p>
+            </motion.div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[
+                { title: 'Plain English, always', text: "No jargon and no runaround. If something doesn't make sense, that's on us to fix." },
+                { title: 'You approve before anything goes live', text: 'Nothing is posted, sent or published in your name without your OK.' },
+                { title: 'You own your stuff', text: 'Your website, domain, content and contact list belong to you, in writing.' },
+                { title: 'A real local person', text: 'You work directly with the founder in Port Charlotte, by phone, text, email or in person.' },
+                { title: 'Fast replies', text: 'Questions answered within one business day, and urgent issues the same day.' },
+                { title: 'No long contracts', text: 'A 3-month minimum to get everything working well, then month to month.' },
+              ].map(({ title, text }, i) => (
+                <motion.div key={title} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.05 }} className="rounded-2xl border border-slate-200 p-6">
+                  <Check className="w-6 h-6 text-orange-500 mb-3" />
+                  <h3 className="font-semibold text-navy-900 mb-1.5">{title}</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">{text}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 
