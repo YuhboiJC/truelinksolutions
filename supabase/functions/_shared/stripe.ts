@@ -1,10 +1,17 @@
 import Stripe from "npm:stripe@17.7.0";
-import { admin, logActivity } from "./db.ts";
+import { admin, getSetting, logActivity } from "./db.ts";
 
-export function stripeClient(): Stripe | null {
-  const key = Deno.env.get("STRIPE_SECRET_KEY");
-  if (!key) return null;
+export async function stripeKey(): Promise<string | null> {
+  return Deno.env.get("STRIPE_SECRET_KEY") || await getSetting("stripe_secret_key");
+}
+
+export function makeStripe(key: string): Stripe {
   return new Stripe(key, { httpClient: Stripe.createFetchHttpClient() });
+}
+
+export async function stripeClient(): Promise<Stripe | null> {
+  const key = await stripeKey();
+  return key ? makeStripe(key) : null;
 }
 
 export { Stripe };

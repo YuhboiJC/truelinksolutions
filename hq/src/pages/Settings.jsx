@@ -21,6 +21,25 @@ export default function Settings() {
   const [status, setStatus] = useState(null);
   const [saving, setSaving] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [stripeKey, setStripeKey] = useState('');
+  const [savingKey, setSavingKey] = useState(false);
+  const [changingKey, setChangingKey] = useState(false);
+
+  const saveKey = async (e) => {
+    e.preventDefault();
+    setSavingKey(true);
+    try {
+      await stripeAction('save_key', { key: stripeKey });
+      setStripeKey('');
+      setChangingKey(false);
+      toast.success('Stripe connected. Now turn on payment sync.');
+      loadStatus();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setSavingKey(false);
+    }
+  };
 
   const loadStatus = () => stripeAction('status').then(setStatus).catch((e) => setStatus({ error: e.message }));
   useEffect(() => {
@@ -62,10 +81,25 @@ export default function Settings() {
           {!status ? <Spinner /> : status.error ? <p className="text-sm text-rose-600">{status.error}</p> : (
             <div className="divide-y divide-slate-100">
               <Check ok={status.email} title="Automated emails (Resend)">
-                {status.email ? 'Welcome series and audit confirmations are sending.' : 'Add RESEND_API_KEY in Supabase → Edge Functions → Secrets.'}
+                {status.email ? 'Welcome series and audit confirmations are sending from info@truelinksolutions.com.' : 'Email sending key is missing.'}
               </Check>
               <Check ok={status.connected} title={`Stripe${status.mode ? ` (${status.mode} mode)` : ''}`}>
-                {status.connected ? 'Invoices are created and emailed through your Stripe account.' : 'Add STRIPE_SECRET_KEY in Supabase → Edge Functions → Secrets.'}
+                {status.connected && !changingKey ? (
+                  <>
+                    <p>Invoices are created and emailed through your Stripe account.</p>
+                    {status.mode === 'test' && <p className="text-amber-600 mt-1">Test mode: invoices are practice only. Switch to your live key when you're ready to bill real clients.</p>}
+                    <button className="btn btn-outline mt-2" onClick={() => setChangingKey(true)}>{status.mode === 'test' ? 'Switch to live key' : 'Change key'}</button>
+                  </>
+                ) : (
+                  <form onSubmit={saveKey} className="mt-1 space-y-2">
+                    <p>In Stripe, open <strong>Developers → API keys</strong> and copy the <strong>Secret key</strong> (starts with <code>sk_test_</code> or <code>sk_live_</code>). It's stored securely on the server and never shown again.</p>
+                    <input className="input font-mono" type="password" autoComplete="off" placeholder="sk_test_…" value={stripeKey} onChange={(e) => setStripeKey(e.target.value)} />
+                    <div className="flex gap-2">
+                      <button className="btn btn-navy" disabled={savingKey || !stripeKey.trim()}>{savingKey ? 'Checking…' : 'Connect Stripe'}</button>
+                      {changingKey && <button type="button" className="btn btn-outline" onClick={() => setChangingKey(false)}>Cancel</button>}
+                    </div>
+                  </form>
+                )}
               </Check>
               <Check ok={status.webhook} title="Stripe payment sync">
                 {status.webhook ? 'Paid, voided and overdue invoices update here automatically.' : (

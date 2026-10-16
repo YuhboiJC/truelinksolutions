@@ -1,4 +1,4 @@
-import type { BusinessProfile } from "./db.ts";
+import { getSetting, type BusinessProfile } from "./db.ts";
 
 const SITE = "https://truelinksolutions.com";
 const LOGO = `${SITE}/logo.png`;
@@ -54,7 +54,7 @@ export async function sendEmail(opts: {
   unsubscribeToken?: string;
   replyTo?: string;
 }): Promise<void> {
-  const key = Deno.env.get("RESEND_API_KEY");
+  const key = Deno.env.get("RESEND_API_KEY") || await getSetting("resend_api_key");
   if (!key) throw new Error("RESEND_API_KEY is not set");
   const headers: Record<string, string> = {};
   if (opts.unsubscribeToken) headers["List-Unsubscribe"] = `<${unsubscribeUrl(opts.unsubscribeToken)}>`;

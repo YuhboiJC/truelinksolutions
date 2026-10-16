@@ -23,8 +23,8 @@ Everything is stored in **Supabase** (one database). No PHP or MySQL.
 
 ## Secrets (Supabase → Edge Functions → Secrets)
 
-- `RESEND_API_KEY`: from resend.com → API Keys
-- `STRIPE_SECRET_KEY`: from Stripe → Developers → API keys (start with the test key `sk_test_…`)
+- `RESEND_API_KEY`: optional. Already stored server-only in `app_settings` (send-only key, created Oct 15, 2026)
+- `STRIPE_SECRET_KEY`: optional. Easier: paste it in HQ → Settings (stored server-only in `app_settings`)
 
 The Stripe webhook secret is created automatically when you click **Turn on payment sync** in
 HQ → Settings.

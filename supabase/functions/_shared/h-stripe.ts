@@ -1,7 +1,7 @@
 // Dashboard-only Stripe actions. Caller must be a signed-in admin.
 import { admin, getSetting, requireAdmin, setSetting } from "./db.ts";
 import { json, preflight } from "./http.ts";
-import { stripeClient, upsertInvoice } from "./stripe.ts";
+import { makeStripe, stripeKey, upsertInvoice } from "./stripe.ts";
 
 const WEBHOOK_EVENTS = [
   "invoice.created", "invoice.finalized", "invoice.sent", "invoice.updated", "invoice.paid",
@@ -15,20 +15,36 @@ export async function handleStripe(req: Request): Promise<Response> {
 
   const body = await req.json().catch(() => ({}));
   const action = String(body.action ?? "");
-  const stripe = stripeClient();
+  if (action === "save_key") {
+    const key = String(body.key ?? "").trim();
+    if (!/^(sk|rk)_(test|live)_[A-Za-z0-9]{10,}$/.test(key)) {
+      return json(req, { ok: false, error: "That doesn't look like a Stripe secret key (it starts with sk_ or rk_)." }, 422);
+    }
+    try {
+      await makeStripe(key).invoices.list({ limit: 1 });
+    } catch (e) {
+      return json(req, { ok: false, error: `Stripe rejected that key: ${(e as Error).message}` }, 422);
+    }
+    await setSetting("stripe_secret_key", key);
+    // A new key (e.g. test -> live) needs its own webhook endpoint.
+    await admin.from("app_settings").delete().in("key", ["stripe_webhook_secret", "stripe_webhook_id"]);
+    return json(req, { ok: true });
+  }
+
+  const key = (await stripeKey()) ?? "";
+  const stripe = key ? makeStripe(key) : null;
 
   if (action === "status") {
-    const key = Deno.env.get("STRIPE_SECRET_KEY") ?? "";
     return json(req, {
       ok: true,
       connected: !!stripe,
       mode: key.startsWith("sk_live") || key.startsWith("rk_live") ? "live" : key ? "test" : null,
       webhook: !!(await getSetting("stripe_webhook_secret")),
-      email: !!Deno.env.get("RESEND_API_KEY"),
+      email: !!(Deno.env.get("RESEND_API_KEY") || await getSetting("resend_api_key")),
     });
   }
 
-  if (!stripe) return json(req, { ok: false, error: "Stripe isn't connected yet. Add STRIPE_SECRET_KEY in Supabase." }, 400);
+  if (!stripe) return json(req, { ok: false, error: "Stripe isn't connected yet. Add your Stripe key in Settings." }, 400);
 
   try {
     if (action === "setup_webhook") {

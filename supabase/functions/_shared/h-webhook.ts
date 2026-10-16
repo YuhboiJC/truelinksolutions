@@ -5,7 +5,7 @@ import { Stripe, stripeClient, upsertInvoice } from "./stripe.ts";
 const crypto = Stripe.createSubtleCryptoProvider();
 
 export async function handleWebhook(req: Request): Promise<Response> {
-  const stripe = stripeClient();
+  const stripe = await stripeClient();
   const secret = await getSetting("stripe_webhook_secret");
   const sig = req.headers.get("stripe-signature");
   if (!stripe || !secret || !sig) return new Response("not configured", { status: 400 });
