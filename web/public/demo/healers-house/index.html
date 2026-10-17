@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Healer's House Dashboard</title>
+<meta name="robots" content="noindex">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Poppins:wght@400;500;600&display=swap">
+<style>
+/* Layout: an app shell in the church's own palette (cream, ink, gold) - sidebar of sections, one working pane. Single light theme on purpose: it mirrors their website. */
+:root {
+  --bg: #f5f2ea; --surface: #fffdf8; --ink: #0a0a08; --muted: #5a5244; --soft: #78705c; --line: #e3ddcf;
+  --gold: #a1863d; --gold-strong: #8a7232; --gold-tint: #f7f2e4; --gold-mid: #dcc68b;
+  --good: #2f7a4f; --good-tint: #e6f2ea; --warn: #9a6200; --warn-tint: #fbf0dc;
+  --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --sans: "Poppins", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 14px/1.55 var(--sans); }
+button { font: inherit; cursor: pointer; }
+a { color: var(--gold-strong); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.demo-bar { background: var(--ink); color: #f5f2ea; text-align: center; font-size: 12.5px; padding: 8px max(16px, env(safe-area-inset-left, 0px)) 8px max(16px, env(safe-area-inset-right, 0px)); }
+.demo-bar strong { color: var(--gold-mid); font-weight: 600; }
+.shell { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 36px); }
+.shell > * { min-width: 0; }
+aside { background: var(--surface); border-right: 1px solid var(--line); padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; }
+.brand { padding: 0 8px; }
+.brand .name { font: 700 24px/1.1 var(--serif); }
+.brand .sub { font-size: 12px; color: var(--soft); margin-top: 4px; }
+nav { display: grid; gap: 2px; }
+nav button { text-align: left; background: none; border: 0; border-radius: 8px; padding: 9px 12px; color: var(--muted); display: flex; align-items: center; gap: 10px; }
+nav button:hover { background: var(--gold-tint); color: var(--ink); }
+nav button[aria-current="page"] { background: var(--ink); color: #f5f2ea; }
+nav svg { width: 18px; height: 18px; flex: none; }
+.count { margin-left: auto; background: var(--gold); color: #fff; font-size: 11px; font-weight: 600; border-radius: 999px; padding: 1px 7px; }
+.side-foot { margin-top: auto; font-size: 12px; color: var(--soft); padding: 0 8px; }
+main { padding: 32px max(16px, env(safe-area-inset-right, 0px)) 48px 32px; min-width: 0; }
+.wrap { max-width: 1080px; display: grid; gap: 24px; }
+.wrap > * { min-width: 0; }
+h1 { font: 700 34px/1.1 var(--serif); margin: 0; text-wrap: balance; }
+h2 { font: 600 15px/1.3 var(--sans); margin: 0; }
+.lede { color: var(--muted); margin: 6px 0 0; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 4px; }
+.tile .k { font-size: 12px; color: var(--soft); }
+.tile .v { font: 600 26px/1.15 var(--sans); font-variant-numeric: tabular-nums; }
+.up { color: var(--good); font-size: 12px; font-weight: 500; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 14px; min-width: 0; align-content: start; }
+.row2 { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; }
+.row2 > *, .row3 > * { min-width: 0; }
+.row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.callout { background: var(--ink); color: #f5f2ea; border-radius: 12px; padding: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; justify-content: space-between; }
+.callout p { margin: 4px 0 0; color: #cbc7bd; }
+.btn { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 7px 12px; font-size: 13px; font-weight: 500; }
+.btn:hover { border-color: var(--gold); }
+.btn.gold { background: var(--gold); border-color: var(--gold); color: #fff; }
+.btn.gold:hover { background: var(--gold-strong); }
+.pill { display: inline-block; font-size: 11.5px; font-weight: 500; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.pill.ok { background: var(--good-tint); color: var(--good); }
+.pill.wait { background: var(--warn-tint); color: var(--warn); }
+.pill.soon { background: var(--gold-tint); color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; font-weight: 500; color: var(--soft); font-size: 12px; padding: 0 8px 8px 0; border-bottom: 1px solid var(--line); }
+td { padding: 9px 8px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+.tbl { overflow-x: auto; }
+.tbl table { min-width: 560px; }
+.bars { display: grid; gap: 10px; }
+.bar { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; font-size: 13px; }
+.bar .track { grid-column: 1 / -1; height: 8px; background: var(--gold-tint); border-radius: 4px; }
+.bar .fill { height: 100%; background: var(--gold); border-radius: 4px; }
+.chart { position: relative; }
+.chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: #f5f2ea; font-size: 12px; padding: 6px 9px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, -110%); }
+.posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+.post { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+.art { aspect-ratio: 1; max-width: 100%; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; color: #f5f2ea; position: relative; }
+.art .q { font: 700 22px/1.15 var(--serif); }
+.art .ref { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-mid); }
+.art .logo { position: absolute; top: 16px; left: 20px; font: 700 14px var(--serif); color: var(--gold-mid); }
+.art.a1 { background: radial-gradient(120% 90% at 80% 10%, #5a5244 0%, #0a0a08 70%); }
+.art.a2 { background: linear-gradient(160deg, #78705c, #2a261f 75%); }
+.art.a3 { background: var(--gold-tint); color: var(--ink); }
+.art.a3 .ref, .art.a3 .logo { color: var(--gold-strong); }
+.art.a4 { background: radial-gradient(100% 80% at 20% 0%, #a1863d 0%, #2a261f 75%); }
+.post .body { padding: 14px; display: grid; gap: 8px; flex: 1; align-content: start; }
+.post .meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; color: var(--soft); }
+.post .cap { font-size: 13px; color: var(--muted); }
+.post .acts { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 14px; }
+.week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.day { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px; min-height: 108px; display: grid; gap: 6px; align-content: start; font-size: 12px; }
+.day b { font-size: 12px; }
+.chip { border-radius: 6px; padding: 4px 6px; font-size: 11.5px; line-height: 1.3; }
+.chip.done { background: var(--good-tint); color: var(--good); }
+.chip.next { background: var(--warn-tint); color: var(--warn); }
+.drop { border: 1.5px dashed var(--gold-mid); border-radius: 12px; padding: 18px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; background: var(--gold-tint); }
+.chat { display: grid; gap: 10px; background: var(--bg); border-radius: 10px; padding: 14px; }
+.msg { max-width: 85%; padding: 9px 12px; border-radius: 12px; font-size: 13px; }
+.msg.them { background: var(--surface); border: 1px solid var(--line); }
+.msg.bot { background: var(--ink); color: #f5f2ea; justify-self: end; }
+.list { display: grid; gap: 0; }
+.list > div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.list > div:last-child { border-bottom: 0; }
+.note { font-size: 12px; color: var(--soft); }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: #f5f2ea; padding: 10px 16px; border-radius: 8px; font-size: 13px; }
+@media (max-width: 860px) {
+  .shell { grid-template-columns: 1fr; }
+  aside { border-right: 0; border-bottom: 1px solid var(--line); padding: 16px max(16px, env(safe-area-inset-left, 0px)) 8px; gap: 12px; }
+  nav { grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; padding-bottom: 8px; }
+  .side-foot { display: none; }
+  main { padding: 20px max(16px, env(safe-area-inset-right, 0px)) 40px max(16px, env(safe-area-inset-left, 0px)); }
+  .row2, .row3 { grid-template-columns: 1fr; }
+  .week { grid-template-columns: repeat(7, minmax(92px, 1fr)); overflow-x: auto; }
+}
+@media (prefers-reduced-motion: no-preference) { section[data-page] { animation: in .25s ease-out; } @keyframes in { from { opacity: .4; } to { opacity: 1; } } }
+</style>
+</head>
+<body>
+<div class="demo-bar"><strong>Demo preview</strong> · Every number on this page is a sample to show how your dashboard works. Your real numbers appear once your new site is live.</div>
+<div class="shell">
+  <aside>
+    <div class="brand"><div class="name">Healer's House</div><div class="sub">Family Church · Ministry dashboard</div></div>
+    <nav aria-label="Dashboard sections">
+      <button data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</button>
+      <button data-go="website"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>Website</button>
+      <button data-go="content"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></svg>Weekly content<span class="count" id="reviewCount">4</span></button>
+      <button data-go="email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email &amp; people</button>
+      <button data-go="assistant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H9l-5 4z"/></svg>AI helpers</button>
+      <button data-go="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>Plan &amp; billing</button>
+    </nav>
+    <div class="side-foot">Managed by TrueLink Solutions<br>Questions? Reply to any email from us.</div>
+  </aside>
+
+  <main>
+    <!-- HOME -->
+    <section class="wrap" data-page="home" id="home">
+      <div>
+        <h1>Good morning, Healer's House</h1>
+        <p class="lede">Here's how your ministry reached people online this month. <span class="note">(sample numbers)</span></p>
+      </div>
+      <div class="callout">
+        <div><h2 style="color:#f5f2ea">This week's posts are ready for review</h2><p>Made from Sunday's sermon: 4 posts with graphics, a short sermon clip, sermon notes and a newsletter draft.</p></div>
+        <button class="btn gold" data-go="content">Review this week</button>
+      </div>
+      <div class="tiles">
+        <div class="tile"><span class="k">Website visitors this month</span><span class="v">1,284</span><span class="up">▲ 18% vs last month</span></div>
+        <div class="tile"><span class="k">Average time on site</span><span class="v">2m 41s</span><span class="up">▲ 22 seconds</span></div>
+        <div class="tile"><span class="k">Newsletter opened by</span><span class="v">58%</span><span class="up">239 people opened it</span></div>
+        <div class="tile"><span class="k">People reached on Facebook &amp; Instagram</span><span class="v">6,940</span><span class="up">▲ 31% vs last month</span></div>
+      </div>
+      <div class="row2">
+        <div class="card">
+          <h2>Website visitors, last 30 days</h2>
+          <div class="chart" id="homeChart"></div>
+        </div>
+        <div class="card">
+          <h2>Your AI helpers this month</h2>
+          <div class="list">
+            <div><span>Questions answered on your website</span><b>96</b></div>
+            <div><span>Passed to a person (prayer, pastoral care)</span><b>6</b></div>
+            <div><span>Healing Rooms appointment requests</span><b>11</b></div>
+            <div><span>Posts made from sermons</span><b>28</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WEBSITE -->
+    <section class="wrap" data-page="website" id="website" hidden>
+      <div><h1>Website</h1><p class="lede">Who's visiting healershouse.org and what they look at. <span class="note">(sample numbers)</span></p></div>
+      <div class="tiles">
+        <div class="tile"><span class="k">Visitors</span><span class="v">1,284</span><span class="up">▲ 18%</span></div>
+        <div class="tile"><span class="k">First-time visitors</span><span class="v">872</span><span class="up">68% of all visitors</span></div>
+        <div class="tile"><span class="k">Average time on site</span><span class="v">2m 41s</span><span class="up">▲ 22 seconds</span></div>
+        <div class="tile"><span class="k">"Plan a visit" forms sent</span><span class="v">14</span><span class="up">▲ 5 vs last month</span></div>
+      </div>
+      <div class="card"><h2>Visitors per day</h2><div class="chart" id="webChart"></div><p class="note">Sundays and Tuesdays (Healing Rooms) are the busiest days. Hover the line for each day.</p></div>
+      <div class="row3">
+        <div class="card"><h2>Most visited pages</h2><div class="bars" id="pages"></div></div>
+        <div class="card"><h2>How people found you</h2><div class="bars" id="sources"></div></div>
+        <div class="card"><h2>What they use</h2><div class="bars" id="devices"></div><p class="note">Most visitors are on phones, so the new site is built for phones first.</p></div>
+      </div>
+    </section>
+
+    <!-- CONTENT -->
+    <section class="wrap" data-page="content" id="content" hidden>
+      <div><h1>Weekly content</h1><p class="lede">One sermon in, a full week of posts out. Approve what you like, change anything, and we'll make the rest.</p></div>
+      <div class="drop">
+        <div><h2>This week's sermon</h2><p class="note" style="margin:4px 0 0">Picked up automatically from your YouTube channel on Sunday at 2:15 PM · transcript ready</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-toast="In the real dashboard, you paste a YouTube link here.">Paste a YouTube link</button><button class="btn" data-toast="In the real dashboard, you upload a video or audio file here.">Upload a file</button></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:12px"><h2>Posts for this week</h2><button class="btn gold" id="approveAll">Approve all</button></div>
+      <div class="posts" id="posts"></div>
+      <div class="card">
+        <h2>This week at a glance</h2>
+        <div class="week" id="week"></div>
+      </div>
+      <div class="card">
+        <h2>How last week's posts did</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>Post</th><th>Where</th><th class="n">Seen by</th><th class="n">Likes</th><th class="n">Shares</th><th class="n">Comments</th></tr></thead>
+          <tbody>
+            <tr><td>Sermon quote: "Healing begins with being known"</td><td>Facebook</td><td class="n">1,920</td><td class="n">143</td><td class="n">38</td><td class="n">22</td></tr>
+            <tr><td>Healing Rooms are open Tuesday</td><td>Facebook</td><td class="n">1,410</td><td class="n">97</td><td class="n">41</td><td class="n">15</td></tr>
+            <tr><td>Sermon clip: 60 seconds on grace</td><td>Instagram</td><td class="n">1,265</td><td class="n">188</td><td class="n">19</td><td class="n">11</td></tr>
+            <tr><td>Young Adults Life Group invite</td><td>Instagram</td><td class="n">830</td><td class="n">74</td><td class="n">9</td><td class="n">6</td></tr>
+            <tr><td>Midweek devotional</td><td>Facebook</td><td class="n">795</td><td class="n">61</td><td class="n">12</td><td class="n">8</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- EMAIL -->
+    <section class="wrap" data-page="email" id="email" hidden>
+      <div><h1>Email &amp; people</h1><p class="lede">Your newsletter list and how each issue did. <span class="note">(sample numbers and sample names)</span></p></div>
+      <div class="tiles">
+        <div class="tile"><span class="k">People on your email list</span><span class="v">412</span><span class="up">▲ 23 this month</span></div>
+        <div class="tile"><span class="k">Opened the last newsletter</span><span class="v">58%</span><span class="up">239 people</span></div>
+        <div class="tile"><span class="k">Clicked a link in it</span><span class="v">14%</span><span class="up">57 people</span></div>
+        <div class="tile"><span class="k">Unsubscribed</span><span class="v">2</span><span class="up">Very healthy</span></div>
+      </div>
+      <div class="row2">
+        <div class="card"><h2>Email list growth, last 6 months</h2><div class="chart" id="listChart"></div></div>
+        <div class="card"><h2>Newest sign-ups</h2>
+          <div class="list">
+            <div><span>Sample Person A<br><span class="note">From the "Plan a visit" form</span></span><span class="note">Oct 15</span></div>
+            <div><span>Sample Person B<br><span class="note">From the newsletter sign-up</span></span><span class="note">Oct 14</span></div>
+            <div><span>Sample Person C<br><span class="note">From the chat assistant</span></span><span class="note">Oct 12</span></div>
+            <div><span>Sample Person D<br><span class="note">From the Healing Rooms form</span></span><span class="note">Oct 9</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card"><h2>Recent newsletters</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>Newsletter</th><th>Sent</th><th class="n">Sent to</th><th class="n">Opened</th><th class="n">Clicked</th></tr></thead>
+          <tbody>
+            <tr><td>The Family Table: October</td><td>Oct 3</td><td class="n">405</td><td class="n">58%</td><td class="n">14%</td></tr>
+            <tr><td>Weekly: Sermon notes and this week's events</td><td>Sep 29</td><td class="n">401</td><td class="n">55%</td><td class="n">12%</td></tr>
+            <tr><td>Weekly: Kineo Ministry School starts soon</td><td>Sep 22</td><td class="n">398</td><td class="n">61%</td><td class="n">19%</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ASSISTANT -->
+    <section class="wrap" data-page="assistant" id="assistant" hidden>
+      <div><h1>AI helpers</h1><p class="lede">Your helpers work day and night and always hand prayer and pastoral needs to a real person.</p></div>
+      <div class="card"><h2>Your helpers</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>Helper</th><th>What it does</th><th>Status</th><th class="n">This month</th></tr></thead>
+          <tbody>
+            <tr><td><b>Website chat assistant</b></td><td>Answers visitors' questions about service times, both campuses, ministries and how to get involved</td><td><span class="pill ok">Working</span></td><td class="n">96 questions</td></tr>
+            <tr><td><b>Sermon-to-content</b></td><td>Turns each Sunday sermon into posts, graphics, notes and a newsletter draft</td><td><span class="pill ok">Working</span></td><td class="n">4 sermons</td></tr>
+            <tr><td><b>Website updates</b></td><td>Keeps events, sermons and announcements current on the website</td><td><span class="pill ok">Working</span></td><td class="n">9 updates</td></tr>
+            <tr><td><b>Healing Rooms scheduling</b></td><td>Takes Tuesday appointment requests and sends reminders</td><td><span class="pill soon">Coming next</span></td><td class="n">–</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="row2">
+        <div class="card"><h2>A sample conversation</h2>
+          <div class="chat">
+            <div class="msg them">Hi! What time is service on Sunday in Punta Gorda?</div>
+            <div class="msg bot">Good morning! Sunday service at our Punta Gorda campus is 10:00 AM to 12:00 PM at 4827 Fairway Dr N. Would you like directions, or to let us know you're coming?</div>
+            <div class="msg them">Is there anything for my kids?</div>
+            <div class="msg bot">Yes! Families are at the heart of Healer's House. I can have someone from our team reach out with details. What's the best email for you?</div>
+          </div>
+        </div>
+        <div class="card"><h2>What people ask most</h2><div class="bars" id="questions"></div></div>
+      </div>
+    </section>
+
+    <!-- PLAN -->
+    <section class="wrap" data-page="plan" id="plan" hidden>
+      <div><h1>Plan &amp; billing</h1><p class="lede">Everything included in your plan, and your payments in one place.</p></div>
+      <div class="row2">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline"><h2 style="font:700 24px var(--serif)">Founding Church Partner</h2><span class="pill ok">Active</span></div>
+          <p class="note" style="margin:0">Every Legacy-level feature, at cost, as TrueLink's first church partner.</p>
+          <div class="list">
+            <div><span>New website + ministry group website, hosted</span><span class="pill ok">Included</span></div>
+            <div><span>healershouse.org domain, renewed for you</span><span class="pill ok">Included</span></div>
+            <div><span>24/7 website chat assistant</span><span class="pill ok">Included</span></div>
+            <div><span>Weekly sermon-to-content with graphics</span><span class="pill ok">Included</span></div>
+            <div><span>Email newsletter and contact list</span><span class="pill ok">Included</span></div>
+            <div><span>This dashboard, for your whole team</span><span class="pill ok">Included</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Payment</h2>
+          <div class="list">
+            <div><span>Yearly service</span><b>$749.87 / year</b></div>
+            <div><span>Works out to</span><b>$62.49 / month</b></div>
+            <div><span>Paying with</span><span>Bank account (example)</span></div>
+            <div><span>Auto-pay</span><span class="pill ok">On</span></div>
+          </div>
+          <button class="btn" data-toast="In the real dashboard, this opens a secure Stripe page to update your card or bank account.">Update payment method</button>
+          <p class="note" style="margin:0">Card and bank details are kept by Stripe, never by TrueLink.</p>
+        </div>
+      </div>
+      <div class="card"><h2>Invoices</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>Invoice</th><th>Date</th><th class="n">Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>New church website (one time)</td><td>Example</td><td class="n">$750.00</td><td><span class="pill wait">Due</span></td></tr>
+            <tr><td>Ministry group website (one time)</td><td>Example</td><td class="n">$300.00</td><td><span class="pill wait">Due</span></td></tr>
+            <tr><td>Yearly service, first year</td><td>Example</td><td class="n">$749.87</td><td><span class="pill wait">Due</span></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const pages = ['home', 'website', 'content', 'email', 'assistant', 'plan'];
+
+  function show(name) {
+    if (!pages.includes(name)) name = 'home';
+    $$('section[data-page]').forEach((s) => { s.hidden = s.dataset.page !== name; });
+    $$('nav button').forEach((b) => b.setAttribute('aria-current', b.dataset.go === name ? 'page' : 'false'));
+    window.scrollTo(0, 0);
+  }
+  document.addEventListener('click', (e) => {
+    const go = e.target.closest('[data-go]');
+    if (go) { show(go.dataset.go); try { history.replaceState(null, '', '#' + go.dataset.go); } catch (_) {} }
+    const t = e.target.closest('[data-toast]');
+    if (t) toast(t.dataset.toast);
+  });
+  function toast(msg) {
+    const el = document.createElement('div');
+    el.className = 'toast'; el.textContent = msg; el.setAttribute('role', 'status');
+    document.body.appendChild(el); setTimeout(() => el.remove(), 2600);
+  }
+
+  // ---------- sample data (deterministic) ----------
+  const days = [];
+  const start = new Date(2026, 8, 17);
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i);
+    const dow = d.getDay();
+    const base = 30 + i * 0.45;
+    const lift = dow === 0 ? 34 : dow === 2 ? 16 : dow === 1 ? 6 : 0;
+    const wobble = ((i * 37) % 9) - 4;
+    days.push({ d, v: Math.round(base + lift + wobble) });
+  }
+  const fmtDay = (d) => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+  function lineChart(el, rows, opts) {
+    const W = 640, H = opts.h || 220, L = 36, R = 12, T = 12, B = 28;
+    const max = Math.ceil(Math.max(...rows.map((r) => r.v)) / 20) * 20;
+    const x = (i) => L + (i / (rows.length - 1)) * (W - L - R);
+    const y = (v) => T + (1 - v / max) * (H - T - B);
+    const ticks = [0, max / 2, max];
+    const path = rows.map((r, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(r.v).toFixed(1)}`).join('');
+    const area = `${path}L${x(rows.length - 1)} ${y(0)}L${x(0)} ${y(0)}Z`;
+    const labels = opts.labels || [];
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opts.aria}">
+      ${ticks.map((t) => `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="#e3ddcf"/><text x="${L - 8}" y="${y(t) + 4}" text-anchor="end" font-size="11" fill="#78705c">${t}</text>`).join('')}
+      <path d="${area}" fill="#a1863d" fill-opacity="0.12"/>
+      <path d="${path}" fill="none" stroke="#a1863d" stroke-width="2" stroke-linejoin="round"/>
+      ${labels.map((l) => `<text x="${x(l.i)}" y="${H - 6}" text-anchor="middle" font-size="11" fill="#78705c">${l.t}</text>`).join('')}
+      <circle r="5" fill="#a1863d" stroke="#fffdf8" stroke-width="2" cx="${x(rows.length - 1)}" cy="${y(rows.at(-1).v)}"/>
+      <line class="cross" y1="${T}" y2="${H - B}" stroke="#5a5244" stroke-dasharray="3 3" visibility="hidden"/>
+      <circle class="dot" r="5" fill="#a1863d" stroke="#fffdf8" stroke-width="2" visibility="hidden"/>
+      <rect x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent" class="hit"/>
+    </svg><div class="tip" hidden></div>`;
+    const svg = el.querySelector('svg'), tip = el.querySelector('.tip'), cross = el.querySelector('.cross'), dot = el.querySelector('.dot');
+    svg.addEventListener('pointermove', (e) => {
+      const r = svg.getBoundingClientRect();
+      const px = ((e.clientX - r.left) / r.width) * W;
+      const i = Math.max(0, Math.min(rows.length - 1, Math.round(((px - L) / (W - L - R)) * (rows.length - 1))));
+      cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('visibility', 'visible');
+      dot.setAttribute('cx', x(i)); dot.setAttribute('cy', y(rows[i].v)); dot.setAttribute('visibility', 'visible');
+      tip.hidden = false; tip.textContent = opts.tip(rows[i]);
+      tip.style.left = (x(i) / W) * r.width + 'px'; tip.style.top = (y(rows[i].v) / H) * r.height + 'px';
+    });
+    svg.addEventListener('pointerleave', () => { tip.hidden = true; cross.setAttribute('visibility', 'hidden'); dot.setAttribute('visibility', 'hidden'); });
+  }
+  const weekLabels = [0, 7, 14, 21, 29].map((i) => ({ i, t: days[i].d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }));
+  lineChart($('#homeChart'), days, { aria: 'Website visitors per day, last 30 days', labels: weekLabels, tip: (r) => `${fmtDay(r.d)}: ${r.v} visitors` });
+  lineChart($('#webChart'), days, { aria: 'Website visitors per day', labels: weekLabels, h: 240, tip: (r) => `${fmtDay(r.d)}: ${r.v} visitors` });
+  const months = ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+  const list = [318, 334, 351, 370, 389, 412].map((v, i) => ({ v, m: months[i] }));
+  lineChart($('#listChart'), list, { aria: 'Email list size by month', labels: list.map((r, i) => ({ i, t: r.m })), tip: (r) => `${r.m}: ${r.v} people` });
+
+  function bars(el, rows) {
+    const max = Math.max(...rows.map((r) => r[1]));
+    el.innerHTML = rows.map(([k, v, suffix]) => `<div class="bar"><span>${k}</span><b style="font-variant-numeric:tabular-nums">${v}${suffix || ''}</b><div class="track"><div class="fill" style="width:${(v / max) * 100}%"></div></div></div>`).join('');
+  }
+  bars($('#pages'), [['Home', 1102], ['Sermons & live stream', 486], ['Plan a visit', 341], ['Healing Rooms', 298], ['Give', 154]]);
+  bars($('#sources'), [['Google search', 44, '%'], ['Facebook & Instagram', 27, '%'], ['Typed the address', 18, '%'], ['YouTube', 11, '%']]);
+  bars($('#devices'), [['Phone', 71, '%'], ['Computer', 24, '%'], ['Tablet', 5, '%']]);
+  bars($('#questions'), [['Service times & locations', 34], ['Healing Rooms appointments', 21], ['Kids & families', 14], ['Life Groups', 12], ['Giving', 9], ['Prayer requests (to a person)', 6]]);
+
+  // ---------- posts ----------
+  const posts = [
+    { art: 'a1', q: 'Healing begins where we are fully known.', ref: 'Sample sermon quote', when: 'Mon 9:00 AM', where: 'Facebook + Instagram', cap: 'This Sunday we were reminded that God meets us right where we are. Missed it? Watch the full message on our YouTube channel.', s: 'ok' },
+    { art: 'a3', q: 'Healing Rooms are open this Tuesday', ref: '10:30 AM to 1:00 PM · Port Charlotte', when: 'Tue 8:00 AM', where: 'Facebook', cap: 'Need prayer for healing? Our Healing Rooms team is ready to pray with you. Walk in or request a time online.', s: 'wait' },
+    { art: 'a2', q: '"Be still, and know that I am God."', ref: 'Psalm 46:10', when: 'Wed 7:00 AM', where: 'Instagram', cap: 'A midweek reminder from Sunday’s message. Take a quiet minute with this verse today.', s: 'wait' },
+    { art: 'a4', q: 'Bring a friend this Sunday', ref: 'Punta Gorda · 10:00 AM', when: 'Fri 5:00 PM', where: 'Facebook + Instagram', cap: 'Everyone is welcome at Healer’s House. Join us Sunday at 10 AM, and stay after to say hi!', s: 'wait' },
+  ];
+  const postsEl = $('#posts');
+  function renderPosts() {
+    postsEl.innerHTML = posts.map((p, i) => `<article class="post">
+      <div class="art ${p.art}"><span class="logo">Healer's House</span><div class="q">${p.q}</div><div class="ref">${p.ref}</div></div>
+      <div class="body"><div class="meta"><span>${p.when} · ${p.where}</span>${p.s === 'ok' ? '<span class="pill ok">Approved</span>' : '<span class="pill wait">Needs review</span>'}</div><div class="cap">${p.cap}</div></div>
+      <div class="acts">${p.s === 'ok' ? `<button class="btn" data-copy="${i}">Copy caption</button><button class="btn" data-toast="In the real dashboard, this downloads the graphic.">Download</button>` : `<button class="btn gold" data-approve="${i}">Approve</button><button class="btn" data-toast="In the real dashboard, you can edit the caption right here.">Edit</button><button class="btn" data-toast="In the real dashboard, the AI makes a new version from your note.">Redo</button>`}</div>
+    </article>`).join('');
+    const n = posts.filter((p) => p.s !== 'ok').length;
+    $('#reviewCount').textContent = n; $('#reviewCount').hidden = n === 0;
+  }
+  postsEl.addEventListener('click', (e) => {
+    const a = e.target.closest('[data-approve]');
+    if (a) { posts[+a.dataset.approve].s = 'ok'; renderPosts(); renderWeek(); toast('Approved. It will be ready to post on schedule.'); }
+    const c = e.target.closest('[data-copy]');
+    if (c) {
+      const text = posts[+c.dataset.copy].cap;
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Caption copied'), () => toast('Caption: ' + text.slice(0, 40) + '…'));
+    }
+  });
+  $('#approveAll').addEventListener('click', () => { posts.forEach((p) => (p.s = 'ok')); renderPosts(); renderWeek(); toast('All posts approved for this week'); });
+
+  function renderWeek() {
+    const plan = [
+      ['Mon', [['Sermon quote', 0]]], ['Tue', [['Healing Rooms reminder', 1]]], ['Wed', [['Verse of the week', 2], ['Newsletter goes out', -1]]],
+      ['Thu', [['Sermon clip', -2]]], ['Fri', [['Bring a friend', 3]]], ['Sat', []], ['Sun', [['Live stream 10 AM', -3]]],
+    ];
+    $('#week').innerHTML = plan.map(([d, items]) => `<div class="day"><b>${d}</b>${items.map(([t, i]) => {
+      const ok = i >= 0 ? posts[i].s === 'ok' : true;
+      return `<span class="chip ${ok ? 'done' : 'next'}">${ok ? '✓ ' : ''}${t}${ok ? '' : ' · needs review'}</span>`;
+    }).join('') || '<span class="note">Rest day</span>'}</div>`).join('');
+  }
+  renderPosts(); renderWeek();
+
+  let start0 = 'home';
+  try { start0 = (location.hash || '#home').slice(1); } catch (_) {}
+  show(start0);
+})();
+</script>
+</body>
+</html>
