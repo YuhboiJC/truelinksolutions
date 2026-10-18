@@ -570,12 +570,13 @@ const HomePage = () => {
         <section id="about" className="scroll-mt-24 py-24 bg-slate-50">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div {...fadeUp} className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden md:flex">
-              <div className="md:w-2/5 bg-slate-100 h-80 md:h-auto">
-                {/* Photo from Josh's GitHub profile. Swap for a professional headshot later (e.g. /josh.jpg). */}
+              <div className="md:w-2/5 bg-slate-100 h-[26rem] md:h-auto">
                 <img
-                  src="https://avatars.githubusercontent.com/u/86496695?s=600&v=4"
-                  alt="Josh McLaughlin"
-                  className="w-full h-full object-cover object-top"
+                  src="/josh-mclaughlin.jpg"
+                  alt="Josh McLaughlin, founder of TrueLink Solutions"
+                  width="351"
+                  height="646"
+                  className="w-full h-full object-cover object-[50%_35%]"
                   loading="lazy"
                 />
               </div>
