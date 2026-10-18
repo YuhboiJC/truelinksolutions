@@ -110,7 +110,86 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
 .list > div:last-child { border-bottom: 0; }
 .note { font-size: 12px; color: var(--soft); }
 .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: #f5f2ea; padding: 10px 16px; border-radius: 8px; font-size: 13px; }
+/* calendar */
+.cal-layout { display: grid; grid-template-columns: 1.65fr 1fr; gap: 16px; align-items: start; }
+.cal-layout > * { min-width: 0; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.cal-head .month { font: 700 24px/1.1 var(--serif); min-width: 170px; text-align: center; }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.cal .dow { font-size: 11.5px; color: var(--soft); padding: 6px 8px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--gold-tint); }
+.cal .cell { min-height: 96px; padding: 6px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.cal .cell.out { background: #f8f5ee; }
+.cal .cell.out .num { color: #b5ad9b; }
+.cal .num { font-size: 12px; font-weight: 500; width: 22px; height: 22px; display: grid; place-items: center; }
+.cal .cell.today .num { background: var(--ink); color: #f5f2ea; border-radius: 999px; }
+.ev { border: 0; text-align: left; font-size: 11px; line-height: 1.25; padding: 3px 5px; border-radius: 5px; background: var(--gold-tint); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ev.special { background: var(--gold); color: #fff; font-weight: 500; }
+.ev.closed { background: #ece7dc; color: var(--soft); }
+.ev[aria-pressed="true"] { outline: 2px solid var(--ink); outline-offset: 1px; }
+.agenda { display: grid; gap: 0; }
+.agenda button { display: grid; grid-template-columns: 48px 1fr; gap: 10px; align-items: center; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 4px; color: var(--ink); }
+.agenda button:last-child { border-bottom: 0; }
+.agenda button:hover { background: var(--gold-tint); }
+.agenda .date { text-align: center; line-height: 1.1; }
+.agenda .date b { display: block; font: 700 22px var(--serif); }
+.agenda .date span { font-size: 11px; color: var(--soft); text-transform: uppercase; letter-spacing: .06em; }
+.progress { height: 14px; background: var(--gold-tint); border-radius: 999px; overflow: hidden; }
+.progress > div { height: 100%; background: var(--gold); border-radius: 999px; transition: width .4s ease; }
+.turkeys { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 3px; }
+.turkeys i { aspect-ratio: 1; border-radius: 3px; background: var(--gold-tint); border: 1px solid var(--gold-mid); }
+.turkeys i.on { background: var(--gold); border-color: var(--gold); }
+.ev-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.ev-grid > * { min-width: 0; }
+.facts { display: grid; gap: 10px; }
+.facts div { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; }
+.facts svg { width: 18px; height: 18px; flex: none; color: var(--gold-strong); margin-top: 2px; }
+.person { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.person:last-child { border-bottom: 0; }
+.person .grow { flex: 1; min-width: 0; }
+.avatar { width: 30px; height: 30px; border-radius: 999px; background: var(--ink); color: #f5f2ea; display: grid; place-items: center; font-size: 11px; font-weight: 600; flex: none; }
+.avatar.gold { background: var(--gold); }
+.form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form label { display: grid; gap: 4px; font-size: 12px; color: var(--soft); }
+.form input, .form select, .composer input { font: inherit; font-size: 13.5px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); min-width: 0; }
+.form .full { grid-column: 1 / -1; }
+.tabs-mini { display: flex; gap: 6px; flex-wrap: wrap; }
+/* messages */
+.msgr { display: grid; grid-template-columns: 250px minmax(0, 1fr); height: 620px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.chans { border-right: 1px solid var(--line); padding: 12px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+.chans h3 { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--soft); margin: 12px 10px 4px; font-weight: 500; }
+.chan { display: flex; justify-content: space-between; gap: 8px; align-items: center; border: 0; background: none; text-align: left; padding: 7px 10px; border-radius: 8px; color: var(--muted); font-size: 13px; white-space: nowrap; }
+.chan:hover { background: var(--gold-tint); color: var(--ink); }
+.chan[aria-current="true"] { background: var(--ink); color: #f5f2ea; }
+.chan .unread { background: var(--gold); color: #fff; border-radius: 999px; font-size: 11px; font-weight: 600; padding: 0 7px; }
+.thread { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.thread-head { padding: 14px 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+.thread-head p { margin: 2px 0 0; font-size: 12px; color: var(--soft); }
+.msgs { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+.m { display: flex; gap: 10px; }
+.m .who { font-weight: 600; font-size: 13px; }
+.m .time { font-size: 11.5px; color: var(--soft); margin-left: 6px; font-weight: 400; }
+.m p { margin: 2px 0 0; font-size: 13.5px; }
+.m .sys { font-size: 12px; color: var(--good); margin-top: 4px; }
+.mention { background: var(--gold-tint); color: var(--gold-strong); font-weight: 600; border-radius: 4px; padding: 0 3px; }
+.composer { border-top: 1px solid var(--line); padding: 12px; display: flex; gap: 8px; position: relative; }
+.composer input { flex: 1; }
+.suggest { position: absolute; bottom: 60px; left: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 8px 24px rgba(10, 10, 8, .14); min-width: 280px; max-width: calc(100% - 24px); overflow: hidden; z-index: 5; }
+.suggest button { display: flex; justify-content: space-between; gap: 12px; width: 100%; border: 0; background: none; padding: 8px 12px; text-align: left; font-size: 13px; color: var(--ink); }
+.suggest button span { color: var(--soft); font-size: 12px; }
+.suggest button:hover, .suggest button.on { background: var(--gold-tint); }
+.groupform { padding: 18px; display: grid; gap: 14px; overflow-y: auto; }
+.checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; }
+.checks label { display: flex; gap: 8px; align-items: center; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; }
+.checks input { accent-color: var(--gold); }
 @media (max-width: 860px) {
+  .cal-layout, .ev-grid { grid-template-columns: 1fr; }
+  .cal .cell { min-height: 54px; padding: 3px; }
+  .ev { font-size: 0; height: 7px; padding: 0; }
+  .form { grid-template-columns: 1fr; }
+  .msgr { grid-template-columns: 1fr; height: auto; }
+  .chans { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+  .chans h3 { display: none; }
+  .msgs { max-height: 420px; }
   .shell { grid-template-columns: 1fr; }
   aside { border-right: 0; border-bottom: 1px solid var(--line); padding: 16px max(16px, env(safe-area-inset-left, 0px)) 8px; gap: 12px; }
   nav { grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; padding-bottom: 8px; }
@@ -129,6 +208,8 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
     <div class="brand"><div class="name">Healer's House</div><div class="sub">Family Church · Ministry dashboard</div></div>
     <nav aria-label="Dashboard sections">
       <button data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</button>
+      <button data-go="calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 18h2"/></svg>Calendar</button>
+      <button data-go="messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h12v9H8l-4 3z"/><path d="M10 16h6l4 3V8h-2"/></svg>Messages<span class="count" id="msgCount">3</span></button>
       <button data-go="website"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>Website</button>
       <button data-go="content"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></svg>Weekly content<span class="count" id="reviewCount">4</span></button>
       <button data-go="email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email &amp; people</button>
@@ -155,6 +236,7 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
         <div class="tile"><span class="k">Newsletter opened by</span><span class="v">58%</span><span class="up">239 people opened it</span></div>
         <div class="tile"><span class="k">People reached on Facebook &amp; Instagram</span><span class="v">6,940</span><span class="up">▲ 31% vs last month</span></div>
       </div>
+      <div class="card" id="homeEvent"></div>
       <div class="row2">
         <div class="card">
           <h2>Website visitors, last 30 days</h2>
@@ -170,6 +252,50 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- CALENDAR -->
+    <section class="wrap" data-page="calendar" id="calendar" hidden>
+      <div style="display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap">
+        <div><h1>Calendar</h1><p class="lede">Every service and event, who's leading it, who's helping, and how close you are to each goal. <span class="note">(sample events and names)</span></p></div>
+        <button class="btn gold" id="addEventBtn">+ Add an event</button>
+      </div>
+      <div class="card" id="addEventCard" hidden>
+        <h2>Add an event</h2>
+        <form class="form" id="addEventForm">
+          <label class="full">Event name<input name="title" required placeholder="e.g. Christmas food drive"></label>
+          <label>Date<input name="date" type="date" required value="2026-12-12"></label>
+          <label>Start time<input name="time" type="time" value="10:00"></label>
+          <label>Where<select name="where"><option>Punta Gorda campus · 4827 Fairway Dr N</option><option>Port Charlotte campus · 17940 Toledo Blade Blvd, Unit D</option><option>Off site (add details later)</option></select></label>
+          <label>Who's leading it<select name="lead" id="leadSelect"></select></label>
+          <label>Volunteers needed<input name="need" type="number" min="0" value="10"></label>
+          <label>Fundraising goal ($, optional)<input name="goal" type="number" min="0" placeholder="Leave blank if none"></label>
+          <div class="full" style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="btn" id="cancelEvent">Cancel</button><button class="btn gold">Add to calendar</button></div>
+        </form>
+      </div>
+      <div class="cal-layout">
+        <div class="card">
+          <div class="cal-head">
+            <button class="btn" id="prevMonth" aria-label="Previous month">‹</button>
+            <span class="month" id="monthLabel"></span>
+            <button class="btn" id="nextMonth" aria-label="Next month">›</button>
+          </div>
+          <div class="cal" id="calGrid"></div>
+          <p class="note" style="margin:0">Gold = special events. Light = weekly services. Click any event for details.</p>
+        </div>
+        <div class="card"><h2 id="agendaTitle">Coming up</h2><div class="agenda" id="agenda"></div></div>
+      </div>
+      <div id="eventDetail"></div>
+    </section>
+
+    <!-- MESSAGES -->
+    <section class="wrap" data-page="messages" id="messages" hidden>
+      <div><h1>Messages</h1><p class="lede">Talk with your leaders and teams in one place. Type <b>@</b> to ping a person or a whole team, like <span class="mention">@ushers</span>. <span class="note">(sample names and messages)</span></p></div>
+      <div class="msgr">
+        <div class="chans" id="chanList"></div>
+        <div class="thread" id="thread"></div>
+      </div>
+      <p class="note" style="margin:0">Everyone you ping gets a notification by email right away, even if they're not logged in.</p>
     </section>
 
     <!-- WEBSITE -->
@@ -322,7 +448,7 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
 (function () {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-  const pages = ['home', 'website', 'content', 'email', 'assistant', 'plan'];
+  const pages = ['home', 'calendar', 'messages', 'website', 'content', 'email', 'assistant', 'plan'];
 
   function show(name) {
     if (!pages.includes(name)) name = 'home';
@@ -441,6 +567,366 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
     }).join('') || '<span class="note">Rest day</span>'}</div>`).join('');
   }
   renderPosts(); renderWeek();
+
+  // ================= shared: people & teams (sample) =================
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const people = [
+    { id: 'dana', name: 'Dana R.', role: 'Outreach lead', phone: '(941) 555-0142', teams: ['outreach', 'leaders'] },
+    { id: 'marcus', name: 'Marcus T.', role: 'Head usher', phone: '(941) 555-0117', teams: ['ushers', 'leaders', 'outreach'] },
+    { id: 'kevin', name: 'Kevin L.', role: 'Usher', phone: '(941) 555-0163', teams: ['ushers'] },
+    { id: 'tasha', name: 'Tasha W.', role: 'Usher', phone: '(941) 555-0188', teams: ['ushers', 'kids'] },
+    { id: 'luis', name: 'Luis M.', role: 'Usher', phone: '(941) 555-0129', teams: ['ushers', 'outreach'] },
+    { id: 'grace', name: 'Grace P.', role: 'Worship leader', phone: '(941) 555-0151', teams: ['worship', 'leaders'] },
+    { id: 'ben', name: 'Ben S.', role: 'Healing Rooms coordinator', phone: '(941) 555-0176', teams: ['healing', 'leaders'] },
+    { id: 'amy', name: 'Amy K.', role: 'Kids ministry lead', phone: '(941) 555-0134', teams: ['kids', 'leaders'] },
+  ];
+  const P = Object.fromEntries(people.map((p) => [p.id, p]));
+  const initials = (n) => n.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+  const teams = [
+    { id: 'leaders', handle: 'leaders', name: 'All leaders' },
+    { id: 'ushers', handle: 'ushers', name: 'Ushers' },
+    { id: 'worship', handle: 'worship', name: 'Worship team' },
+    { id: 'outreach', handle: 'outreach', name: 'Outreach' },
+    { id: 'healing', handle: 'healing-rooms', name: 'Healing Rooms' },
+    { id: 'kids', handle: 'kids', name: 'Kids ministry' },
+  ];
+  const teamMembers = (tid) => people.filter((p) => p.teams.includes(tid));
+
+  // ================= CALENDAR =================
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const PG = 'Punta Gorda campus · 4827 Fairway Dr N';
+  const PC = 'Port Charlotte campus · 17940 Toledo Blade Blvd, Unit D';
+  const recurring = [
+    { dow: 0, title: 'Sunday service', time: '10:00 AM', where: PG },
+    { dow: 2, title: 'Healing Rooms', time: '10:30 AM', where: PC },
+    { dow: 3, title: 'Bible class', time: '6:30 PM', where: PC },
+  ];
+  let nextId = 100;
+  const events = [
+    { id: 1, date: '2026-11-06', title: 'Prayer & worship night', time: '7:00 PM', where: PC, lead: 'grace', need: 6, vols: [['grace', 'Leading worship'], ['ben', 'Prayer team'], ['amy', 'Welcome table']] },
+    { id: 2, date: '2026-11-13', title: 'Young Adults Life Group', time: '7:00 PM', where: PG, lead: 'luis', need: 4, vols: [['luis', 'Host'], ['tasha', 'Snacks']] },
+    { id: 3, date: '2026-11-20', title: 'Turkey packing night', time: '6:00 PM', where: PG, lead: 'marcus', need: 15, vols: [['marcus', 'Packing lead'], ['kevin', 'Packing'], ['tasha', 'Packing'], ['luis', 'Packing'], ['dana', 'Check-in lists'], ['amy', 'Kids corner'], ['grace', 'Packing'], ['ben', 'Packing']] },
+    {
+      id: 4, date: '2026-11-21', title: 'Thanksgiving Turkey Giveaway', time: '9:00 AM to 12:00 PM', where: PG + ' (parking lot)', lead: 'dana', colead: 'marcus', need: 25,
+      goal: 3000, unit: 25, unitName: 'turkeys', note: 'Each $25 buys one turkey for a local family.',
+      gifts: [['Sample Giver A', 250, 'Nov 1'], ['Anonymous', 100, 'Nov 1'], ['Sample Giver B', 75, 'Oct 31'], ['Sample Giver C', 500, 'Oct 30'], ['Sample Giver D', 25, 'Oct 29'], ['Anonymous', 50, 'Oct 28'], ['Sample Giver E', 150, 'Oct 27']],
+      giverCount: 38, raised: 2140,
+      vols: [['marcus', 'Co-lead · traffic'], ['kevin', 'Loading cars'], ['tasha', 'Greeters'], ['luis', 'Loading cars'], ['amy', 'Kids & families'], ['ben', 'Prayer tent'], ['grace', 'Greeters']],
+      extraVols: 10,
+    },
+    { id: 5, date: '2026-11-26', title: 'Thanksgiving: church office closed', time: 'All day', where: '', closed: true },
+  ];
+  let view = { y: 2026, m: 10 };
+  let selected = 4;
+  const today = new Date(2026, 9, 18);
+  const pad = (n) => String(n).padStart(2, '0');
+  const iso = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`;
+  const eventsOn = (y, m, d) => {
+    const dow = new Date(y, m, d).getDay();
+    const list = recurring.filter((r) => r.dow === dow).map((r) => ({ ...r, id: `r${r.dow}-${y}${m}${d}`, recurring: true, date: iso(y, m, d) }));
+    return list.concat(events.filter((e) => e.date === iso(y, m, d)));
+  };
+  const nice = (dateStr) => { const [y, m, d] = dateStr.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); };
+  const money = (n) => '$' + n.toLocaleString('en-US');
+
+  function renderCalendar() {
+    $('#monthLabel').textContent = `${MONTHS[view.m]} ${view.y}`;
+    const first = new Date(view.y, view.m, 1).getDay();
+    const days = new Date(view.y, view.m + 1, 0).getDate();
+    const prevDays = new Date(view.y, view.m, 0).getDate();
+    let html = DOW.map((d) => `<div class="dow">${d}</div>`).join('');
+    const cells = Math.ceil((first + days) / 7) * 7;
+    for (let i = 0; i < cells; i++) {
+      const d = i - first + 1;
+      if (d < 1 || d > days) { html += `<div class="cell out"><span class="num">${d < 1 ? prevDays + d : d - days}</span></div>`; continue; }
+      const isToday = view.y === today.getFullYear() && view.m === today.getMonth() && d === today.getDate();
+      const evs = eventsOn(view.y, view.m, d);
+      html += `<div class="cell${isToday ? ' today' : ''}"><span class="num">${d}</span>${evs.map((e) => e.recurring
+        ? `<span class="ev" title="${esc(e.title)} · ${esc(e.time)}">${esc(e.time.replace(':00', '').replace(' ', ''))} ${esc(e.title)}</span>`
+        : `<button class="ev ${e.closed ? 'closed' : 'special'}" data-ev="${e.id}" aria-pressed="${e.id === selected}" title="${esc(e.title)}">${esc(e.title)}</button>`).join('')}</div>`;
+    }
+    $('#calGrid').innerHTML = html;
+    const monthEvents = events.filter((e) => e.date.startsWith(`${view.y}-${pad(view.m + 1)}`)).sort((a, b) => a.date.localeCompare(b.date));
+    $('#agendaTitle').textContent = `Special events in ${MONTHS[view.m]}`;
+    $('#agenda').innerHTML = monthEvents.length ? monthEvents.map((e) => {
+      const [, mm, dd] = e.date.split('-').map(Number);
+      const pct = e.goal ? Math.min(100, Math.round((e.raised / e.goal) * 100)) : null;
+      return `<button data-ev="${e.id}"><span class="date"><span>${MONTHS[mm - 1].slice(0, 3)}</span><b>${dd}</b></span><span><b style="font-size:13.5px">${esc(e.title)}</b><br><span class="note">${esc(e.time)}${pct !== null ? ` · ${pct}% funded` : e.need ? ` · ${e.vols.length + (e.extraVols || 0)} of ${e.need} volunteers` : ''}</span></span></button>`;
+    }).join('') : '<p class="note" style="margin:0">No special events yet this month. Click "Add an event" to plan one.</p>';
+  }
+
+  const icon = {
+    when: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    where: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+    lead: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg>',
+  };
+
+  function renderDetail() {
+    const e = events.find((x) => x.id === selected);
+    if (!e || e.closed) { $('#eventDetail').innerHTML = ''; return; }
+    const lead = P[e.lead];
+    const co = e.colead ? P[e.colead] : null;
+    const volCount = e.vols.length + (e.extraVols || 0);
+    const volPct = e.need ? Math.min(100, Math.round((volCount / e.need) * 100)) : 0;
+    let fund = '';
+    if (e.goal) {
+      const pct = Math.min(100, Math.round((e.raised / e.goal) * 100));
+      const units = e.unit ? Math.floor(e.raised / e.unit) : 0;
+      const totalUnits = e.unit ? Math.round(e.goal / e.unit) : 0;
+      fund = `<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap"><h2>Giving toward the goal</h2><span class="pill ok">${pct}% there</span></div>
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><span style="font:600 32px var(--sans);font-variant-numeric:tabular-nums">${money(e.raised)}</span><span class="note">of ${money(e.goal)} from ${e.giverCount} givers</span></div>
+        <div class="progress" role="img" aria-label="${pct}% of the goal raised"><div style="width:${pct}%"></div></div>
+        ${e.unit ? `<div><p style="margin:0 0 8px;font-size:13px"><b>${units} of ${totalUnits} ${e.unitName}</b> paid for. ${esc(e.note || '')}</p><div class="turkeys" role="img" aria-label="${units} of ${totalUnits} ${e.unitName} funded">${Array.from({ length: totalUnits }, (_, i) => `<i class="${i < units ? 'on' : ''}"></i>`).join('')}</div></div>` : ''}
+        <div><h2 style="font-size:13px;margin-bottom:4px">Recent gifts</h2>${e.gifts.map(([n, a, d]) => `<div class="person"><span class="avatar gold">${n === 'Anonymous' ? '–' : initials(n.replace('Sample Giver ', 'G '))}</span><span class="grow">${esc(n)}<br><span class="note">${esc(d)}</span></span><b style="font-variant-numeric:tabular-nums">${money(a)}</b></div>`).join('')}
+        ${e.giverCount > e.gifts.length ? `<p class="note" style="margin:6px 0 0">+ ${e.giverCount - e.gifts.length} more givers</p>` : ''}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn gold" data-gift="${e.id}">Record a gift</button><button class="btn" data-toast="In the real dashboard, this copies a giving link you can text or post.">Share giving link</button></div>
+      </div>`;
+    }
+    $('#eventDetail').innerHTML = `<div class="card" style="gap:18px">
+      <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:start">
+        <div><p class="note" style="margin:0 0 4px;text-transform:uppercase;letter-spacing:.08em">${esc(nice(e.date))}</p><h1 style="font-size:30px">${esc(e.title)}</h1></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-toast="In the real dashboard, this sends a reminder to everyone signed up.">Remind volunteers</button><button class="btn gold" data-signup="${e.id}">Sign up to help</button></div>
+      </div>
+      <div class="ev-grid">
+        <div class="card" style="background:var(--bg)">
+          <h2>When &amp; where</h2>
+          <div class="facts">
+            <div>${icon.when}<span>${esc(nice(e.date))}<br>${esc(e.time)}</span></div>
+            ${e.where ? `<div>${icon.where}<span>${esc(e.where)}</span></div>` : ''}
+          </div>
+          <h2 style="margin-top:6px">Who's leading it</h2>
+          ${[lead, co].filter(Boolean).map((p, i) => `<div class="person"><span class="avatar">${initials(p.name)}</span><span class="grow"><b>${esc(p.name)}</b> · ${i ? 'Co-lead' : 'Lead'}<br><span class="note">${esc(p.role)} · <span style="white-space:nowrap">${esc(p.phone)}</span></span></span><button class="btn" data-dm="${p.id}">Message</button></div>`).join('')}
+        </div>
+        <div class="card" style="background:var(--bg)">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><h2>Volunteers</h2><span class="note"><b style="color:var(--ink)">${volCount}</b> of ${e.need} needed</span></div>
+          <div class="progress" role="img" aria-label="${volCount} of ${e.need} volunteers"><div style="width:${volPct}%"></div></div>
+          <div>${e.vols.map(([id, job]) => { const p = id === 'you' ? { name: 'You' } : P[id]; return `<div class="person"><span class="avatar${id === 'you' ? ' gold' : ''}">${initials(p.name)}</span><span class="grow">${esc(p.name)}</span><span class="note">${esc(job)}</span></div>`; }).join('')}
+          ${e.extraVols ? `<p class="note" style="margin:6px 0 0">+ ${e.extraVols} more signed up</p>` : ''}</div>
+          ${volCount < e.need ? `<p class="note" style="margin:0;color:var(--warn)">Still need ${e.need - volCount} more. Tip: ping a team from Messages.</p>` : '<p class="note" style="margin:0;color:var(--good)">Fully staffed.</p>'}
+        </div>
+        ${fund || `<div class="card" style="background:var(--bg)"><h2>Giving</h2><p class="note" style="margin:0">No fundraising goal for this event. Add one when you create an event, and progress shows up here.</p></div>`}
+      </div>
+    </div>`;
+  }
+
+  function selectEvent(id) {
+    selected = id;
+    renderCalendar(); renderDetail();
+    $('#eventDetail').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.addEventListener('click', (ev) => {
+    const b = ev.target.closest('[data-ev]');
+    if (b) selectEvent(+b.dataset.ev);
+    const su = ev.target.closest('[data-signup]');
+    if (su) {
+      const e = events.find((x) => x.id === +su.dataset.signup);
+      if (e.vols.some(([id]) => id === 'you')) { toast("You're already signed up"); return; }
+      e.vols.push(['you', 'Greeters']); renderDetail(); renderCalendar(); renderHomeEvent(); toast(`You're signed up. ${P[e.lead].name} will see it right away.`);
+    }
+    const g = ev.target.closest('[data-gift]');
+    if (g) {
+      const e = events.find((x) => x.id === +g.dataset.gift);
+      e.raised += 50; e.giverCount += 1; e.gifts.unshift(['You', 50, 'Today (example)']);
+      renderDetail(); renderCalendar(); renderHomeEvent(); toast('Gift of $50 recorded. Two more turkeys paid for!');
+    }
+    const dm = ev.target.closest('[data-dm]');
+    if (dm) { openChannel('dm-' + dm.dataset.dm); show('messages'); }
+  });
+  $('#prevMonth').addEventListener('click', () => { view.m--; if (view.m < 0) { view.m = 11; view.y--; } renderCalendar(); });
+  $('#nextMonth').addEventListener('click', () => { view.m++; if (view.m > 11) { view.m = 0; view.y++; } renderCalendar(); });
+  $('#leadSelect').innerHTML = people.map((p) => `<option value="${p.id}">${esc(p.name)} (${esc(p.role)})</option>`).join('');
+  $('#addEventBtn').addEventListener('click', () => { $('#addEventCard').hidden = false; $('#addEventForm [name=title]').focus(); });
+  $('#cancelEvent').addEventListener('click', () => { $('#addEventCard').hidden = true; });
+  $('#addEventForm').addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const f = new FormData(ev.target);
+    const [hh, mi] = String(f.get('time') || '10:00').split(':').map(Number);
+    const time = `${((hh + 11) % 12) + 1}:${pad(mi)} ${hh < 12 ? 'AM' : 'PM'}`;
+    const goal = Number(f.get('goal')) || 0;
+    const e = { id: nextId++, date: String(f.get('date')), title: String(f.get('title')).trim() || 'New event', time, where: String(f.get('where')), lead: String(f.get('lead')), need: Number(f.get('need')) || 0, vols: [[String(f.get('lead')), 'Lead']] };
+    if (goal) Object.assign(e, { goal, raised: 0, giverCount: 0, gifts: [] });
+    events.push(e);
+    const [y, m] = e.date.split('-').map(Number); view = { y, m: m - 1 };
+    $('#addEventCard').hidden = true; ev.target.reset();
+    selectEvent(e.id);
+    toast(`"${e.title}" added. ${P[e.lead].name} was notified as the lead.`);
+  });
+
+  function renderHomeEvent() {
+    const e = events.find((x) => x.id === 4);
+    const pct = Math.min(100, Math.round((e.raised / e.goal) * 100));
+    const volCount = e.vols.length + (e.extraVols || 0);
+    $('#homeEvent').innerHTML = `<div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center">
+      <div><p class="note" style="margin:0;text-transform:uppercase;letter-spacing:.08em">Coming up · ${esc(nice(e.date))}</p><h2 style="font:700 24px var(--serif);margin-top:2px">${esc(e.title)}</h2></div>
+      <button class="btn" data-go="calendar" data-ev="4">Open event</button></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px">
+        <div style="display:grid;gap:6px"><span class="note">${money(e.raised)} of ${money(e.goal)} raised · ${Math.floor(e.raised / 25)} of ${e.goal / 25} turkeys</span><div class="progress"><div style="width:${pct}%"></div></div></div>
+        <div style="display:grid;gap:6px"><span class="note">${volCount} of ${e.need} volunteers signed up</span><div class="progress"><div style="width:${Math.round((volCount / e.need) * 100)}%"></div></div></div>
+      </div>`;
+  }
+
+  // ================= MESSAGES =================
+  const chans = [
+    ...teams.map((t) => ({ id: 't-' + t.id, kind: 'team', team: t.id, name: '#' + t.handle, title: t.name })),
+    { id: 'dm-dana', kind: 'dm', person: 'dana' },
+    { id: 'dm-marcus', kind: 'dm', person: 'marcus' },
+    { id: 'dm-grace', kind: 'dm', person: 'grace' },
+  ];
+  const threads = {
+    't-ushers': [
+      { from: 'kevin', at: 'Thu 8:12 PM', text: '@ushers I’ll be out of town Sunday the 1st for a family trip. Can someone cover the 10 AM front doors?' },
+      { from: 'luis', at: 'Thu 8:40 PM', text: 'I’ve got it, Kevin. Safe travels!' },
+      { from: 'marcus', at: 'Fri 7:05 AM', text: 'Thanks Luis. Reminder @ushers: we need 4 of us in the parking lot for the turkey giveaway on Nov 21. Sign up on the calendar.' },
+    ],
+    't-leaders': [
+      { from: 'dana', at: 'Wed 2:15 PM', text: 'Turkey update: we’re at $2,140 of $3,000! 85 turkeys covered. Can we mention it Sunday?' },
+      { from: 'grace', at: 'Wed 3:02 PM', text: 'Yes, I’ll add it to the announcement slide before worship.' },
+    ],
+    't-outreach': [
+      { from: 'dana', at: 'Tue 10:30 AM', text: '@outreach packing night is Friday Nov 20 at 6. We still need 7 more helpers for the giveaway itself.' },
+    ],
+    't-worship': [{ from: 'grace', at: 'Mon 6:45 PM', text: 'Set list for Sunday is posted. Rehearsal Thursday at 7.' }],
+    't-healing': [{ from: 'ben', at: 'Mon 9:00 AM', text: 'Five appointments booked for Tuesday so far. @healing-rooms please arrive by 10:00 to pray together first.' }],
+    't-kids': [{ from: 'amy', at: 'Sun 1:10 PM', text: 'Great morning with the kids today! We’ll do a craft station at the turkey giveaway.' }],
+    'dm-dana': [{ from: 'dana', at: 'Yesterday', text: 'Do you think we can get the church van for turkey pickups on the 20th?' }],
+    'dm-marcus': [{ from: 'marcus', at: 'Fri', text: 'Parking lot plan for the giveaway is in the event notes.' }],
+    'dm-grace': [{ from: 'grace', at: 'Thu', text: 'Thanks for the slides!' }],
+  };
+  const unread = { 't-ushers': 2, 't-outreach': 1, 'dm-dana': 1 };
+  let current = 't-ushers';
+  let mode = 'thread';
+
+  const chanName = (c) => c.kind === 'dm' ? P[c.person].name : c.name;
+  const handleOf = (p) => p.name.split(' ')[0].toLowerCase();
+  function renderText(t) {
+    return esc(t).replace(/@([a-z][a-z-]*)/gi, (m0, h) => {
+      const team = teams.find((x) => x.handle === h.toLowerCase());
+      const person = people.find((p) => handleOf(p) === h.toLowerCase());
+      return team || person ? `<span class="mention">@${esc(h)}</span>` : m0;
+    });
+  }
+  function renderChans() {
+    const btn = (c) => `<button class="chan" data-chan="${c.id}" aria-current="${c.id === current && mode === 'thread'}"><span>${c.kind === 'dm' ? esc(P[c.person].name) : esc(c.name)}</span>${unread[c.id] ? `<span class="unread">${unread[c.id]}</span>` : ''}</button>`;
+    $('#chanList').innerHTML = `<h3>Teams &amp; groups</h3>${chans.filter((c) => c.kind !== 'dm').map(btn).join('')}<button class="chan" id="newGroup" style="color:var(--gold-strong);font-weight:500">+ New group</button><h3>Direct messages</h3>${chans.filter((c) => c.kind === 'dm').map(btn).join('')}`;
+    const total = Object.values(unread).reduce((a, b) => a + b, 0);
+    $('#msgCount').textContent = total; $('#msgCount').hidden = total === 0;
+  }
+  function membersOf(c) {
+    if (c.kind === 'dm') return [P[c.person]];
+    if (c.team) return teamMembers(c.team);
+    return c.members.map((id) => P[id]);
+  }
+  function renderThread() {
+    if (mode === 'newgroup') {
+      $('#thread').innerHTML = `<form class="groupform" id="groupForm">
+        <div><h2>New group</h2><p class="note" style="margin:4px 0 0">For example, a group for everyone serving at the turkey giveaway.</p></div>
+        <label class="form" style="grid-template-columns:1fr"><span style="font-size:12px;color:var(--soft)">Group name</span><input name="name" required placeholder="turkey-giveaway" style="font:inherit;font-size:13.5px;padding:8px 10px;border:1px solid var(--line);border-radius:8px"></label>
+        <div><span style="font-size:12px;color:var(--soft)">Who's in it</span><div class="checks" style="margin-top:6px">${people.map((p) => `<label><input type="checkbox" name="m" value="${p.id}"${['dana', 'marcus'].includes(p.id) ? ' checked' : ''}>${esc(p.name)} <span class="note">${esc(p.role)}</span></label>`).join('')}</div></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="btn" id="cancelGroup">Cancel</button><button class="btn gold">Create group</button></div>
+      </form>`;
+      return;
+    }
+    const c = chans.find((x) => x.id === current);
+    const mem = membersOf(c);
+    const head = c.kind === 'dm'
+      ? `<div><h2>${esc(P[c.person].name)}</h2><p>${esc(P[c.person].role)} · ${esc(P[c.person].phone)}</p></div>`
+      : `<div><h2>${esc(c.name)} <span class="note" style="font-weight:400">${esc(c.title)}</span></h2><p>${mem.length} members: ${mem.map((p) => esc(p.name)).join(', ')}</p></div>`;
+    $('#thread').innerHTML = `<div class="thread-head">${head}</div>
+      <div class="msgs" id="msgs">${(threads[c.id] || []).map((m) => {
+        const p = m.from === 'you' ? { name: 'You' } : P[m.from];
+        return `<div class="m"><span class="avatar${m.from === 'you' ? ' gold' : ''}">${initials(p.name)}</span><div style="min-width:0"><span class="who">${esc(p.name)}<span class="time">${esc(m.at)}</span></span><p>${renderText(m.text)}</p>${m.sys ? `<div class="sys">${esc(m.sys)}</div>` : ''}</div></div>`;
+      }).join('') || '<p class="note">No messages yet. Say hello!</p>'}</div>
+      <form class="composer" id="composer" autocomplete="off">
+        <div class="suggest" id="suggest" hidden></div>
+        <input id="msgInput" aria-label="Message" placeholder="Message ${esc(chanName(c))}. Type @ to ping someone">
+        <button class="btn gold">Send</button>
+      </form>`;
+    const box = $('#msgs'); box.scrollTop = box.scrollHeight;
+  }
+  function openChannel(id) {
+    current = id; mode = 'thread'; delete unread[id];
+    renderChans(); renderThread();
+  }
+  $('#chanList').addEventListener('click', (ev) => {
+    if (ev.target.closest('#newGroup')) { mode = 'newgroup'; renderChans(); renderThread(); return; }
+    const b = ev.target.closest('[data-chan]');
+    if (b) openChannel(b.dataset.chan);
+  });
+
+  // @mention suggestions
+  let sugg = [], suggIdx = 0;
+  function mentionQuery(input) {
+    const upto = input.value.slice(0, input.selectionStart);
+    const m = upto.match(/(^|\s)@([a-z-]*)$/i);
+    return m ? m[2].toLowerCase() : null;
+  }
+  function updateSuggest(input) {
+    const q = mentionQuery(input);
+    const box = $('#suggest');
+    if (q === null) { box.hidden = true; sugg = []; return; }
+    sugg = [
+      ...teams.map((t) => ({ handle: t.handle, label: `@${t.handle}`, sub: `${teamMembers(t.id).length} people · ${t.name}` })),
+      ...people.map((p) => ({ handle: handleOf(p), label: `@${handleOf(p)}`, sub: `${p.name} · ${p.role}` })),
+    ].filter((s) => s.handle.startsWith(q)).slice(0, 6);
+    suggIdx = 0;
+    box.hidden = !sugg.length;
+    box.innerHTML = sugg.map((s, i) => `<button type="button" data-handle="${s.handle}" class="${i === 0 ? 'on' : ''}"><b>${esc(s.label)}</b><span>${esc(s.sub)}</span></button>`).join('');
+  }
+  function applyMention(input, handle) {
+    const pos = input.selectionStart;
+    const before = input.value.slice(0, pos).replace(/@([a-z-]*)$/i, '@' + handle + ' ');
+    input.value = before + input.value.slice(pos);
+    input.focus(); input.setSelectionRange(before.length, before.length);
+    $('#suggest').hidden = true;
+  }
+  $('#thread').addEventListener('input', (ev) => { if (ev.target.id === 'msgInput') updateSuggest(ev.target); });
+  $('#thread').addEventListener('keydown', (ev) => {
+    if (ev.target.id !== 'msgInput' || $('#suggest').hidden || !sugg.length) return;
+    if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+      ev.preventDefault(); suggIdx = (suggIdx + (ev.key === 'ArrowDown' ? 1 : sugg.length - 1)) % sugg.length;
+      [...$('#suggest').children].forEach((b, i) => b.classList.toggle('on', i === suggIdx));
+    } else if (ev.key === 'Enter' || ev.key === 'Tab') { ev.preventDefault(); applyMention(ev.target, sugg[suggIdx].handle); }
+    else if (ev.key === 'Escape') $('#suggest').hidden = true;
+  });
+  $('#thread').addEventListener('click', (ev) => {
+    const s = ev.target.closest('[data-handle]');
+    if (s) applyMention($('#msgInput'), s.dataset.handle);
+    if (ev.target.closest('#cancelGroup')) openChannel(current);
+  });
+  $('#thread').addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    if (ev.target.id === 'groupForm') {
+      const f = new FormData(ev.target);
+      const handle = String(f.get('name')).trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'new-group';
+      const members = f.getAll('m').map(String);
+      const id = 'g-' + handle;
+      chans.splice(teams.length, 0, { id, kind: 'group', name: '#' + handle, title: 'Group', members });
+      threads[id] = [{ from: 'you', at: 'Just now', text: `Created #${handle}. Welcome, everyone!`, sys: `Added ${members.length} people` }];
+      openChannel(id); toast(`Group #${handle} created with ${members.length} people`);
+      return;
+    }
+    const input = $('#msgInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const notified = new Set();
+    (text.match(/@([a-z][a-z-]*)/gi) || []).forEach((m) => {
+      const h = m.slice(1).toLowerCase();
+      const t = teams.find((x) => x.handle === h);
+      if (t) teamMembers(t.id).forEach((p) => notified.add(p.name));
+      const p = people.find((x) => handleOf(x) === h);
+      if (p) notified.add(p.name);
+    });
+    const msg = { from: 'you', at: 'Just now', text };
+    if (notified.size) msg.sys = `Notified ${notified.size} ${notified.size === 1 ? 'person' : 'people'}: ${[...notified].join(', ')}`;
+    (threads[current] = threads[current] || []).push(msg);
+    renderThread();
+    if (notified.size) toast(`Pinged ${notified.size} ${notified.size === 1 ? 'person' : 'people'} by email and in the app`);
+    $('#msgInput').focus();
+  });
+
+  renderCalendar(); renderDetail(); renderHomeEvent(); renderChans(); renderThread();
 
   let start0 = 'home';
   try { start0 = (location.hash || '#home').slice(1); } catch (_) {}
