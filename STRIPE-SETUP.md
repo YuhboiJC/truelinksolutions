@@ -40,13 +40,12 @@ In the Stripe Dashboard, finish the checklist you already started, in this order
 
 ---
 
-## Step 2: Create the products and prices
+## Step 2: Create every plan in one click (TrueLink HQ)
 
-Product catalog → **+ Add product**. Create one product per plan with **two recurring prices**.
-Set the **Lookup key** on each price (under "Advanced"). The website and dashboard will use
-these keys, so you can change prices later without touching code.
+Open **truelinksolutions.com/hq → Settings → Plans & payments** and click
+**Set up plans in Stripe**. HQ uses the Stripe key you already connected and creates:
 
-| Product name | Monthly price | Lookup key | Yearly price | Lookup key |
+| Plan | Monthly | Lookup key | Yearly (2 months free) | Lookup key |
 |---|---|---|---|---|
 | Seed (Church) | $197 / month | `seed_monthly` | $1,970 / year | `seed_annual` |
 | Harvest (Church) | $497 / month | `harvest_monthly` | $4,970 / year | `harvest_annual` |
@@ -55,97 +54,60 @@ these keys, so you can change prices later without touching code.
 | Growth (Business) | $697 / month | `growth_monthly` | $6,970 / year | `growth_annual` |
 | Partner (Business) | $1,497 / month | `partner_monthly` | $14,970 / year | `partner_annual` |
 
-Yearly = 10 × monthly ("two months free", about 17% off), the same discount SocialSermons uses.
+It also creates:
 
-No setup-fee products are needed. For one-off website-only jobs ($400 simple site, $1,500 full
-site), keep using **TrueLink HQ → Invoices**, which already creates one-time Stripe invoices.
+- **Founders coupons** (forever, Legacy only): `FOUNDERS_MONTHLY` ($200 off a month) and
+  `FOUNDERS_ANNUAL` ($2,000 off a year).
+- **12 Payment Links**, one per plan and billing period. They collect phone and church/business
+  name, and after paying, customers land back on truelinksolutions.com with a welcome message
+  and the kickoff-call booking section. The website's "Get started" buttons pick these links up
+  automatically. No rebuild needed.
+- **Customer Portal**: customers can update their card or bank, see invoices, switch plans
+  (monthly ↔ yearly, upgrade or downgrade, prorated), and cancel at the end of the period they
+  paid for. The portal's login link appears in HQ. Put it in welcome emails as "Manage billing".
+
+The button is safe to click again. It reuses anything that already exists.
+
+**If it says the key doesn't have permission:** the key in HQ is a *restricted* key (`rk_live_…`).
+In Stripe → Developers → API keys, edit that key and set these to **Write**: Products, Prices,
+Coupons, Payment Links, Checkout Sessions, Subscriptions, Customers, Customer portal. Save, then
+click the button again.
+
+For one-off website-only jobs ($400 simple site, $1,500 full site), keep using
+**HQ → Invoices**.
 
 ---
 
-## Step 3: Create the Founders coupons (Healer's House)
+## Step 3: Start Healer's House on Founders pricing
 
-Product catalog → **Coupons** → **+ New**. Create two, both with **Duration: Forever** so the
-price stays locked in:
+Same card in HQ → **Founders pricing**. Healer's House is pre-selected.
 
-| Coupon name | ID | Type | Amount | Applies to |
-|---|---|---|---|---|
-| Founders 20% (monthly) | `FOUNDERS_MONTHLY` | Fixed amount | $200.00 | Legacy (Church) |
-| Founders 20% (annual) | `FOUNDERS_ANNUAL` | Fixed amount | $2,000.00 | Legacy (Church) |
+1. Pick **$797 / month** or **$7,970 / year** ($797 × 10 months, 2 months free).
+2. Choose how they pay:
+   - **Create checkout link to send them** (recommended): a secure Stripe page with the
+     Founders discount already applied. They pick card or bank, auto-pay is turned on, and the
+     subscription starts when they pay. The link works for 24 hours. If they don't use it, just
+     make a new one.
+   - **Start now and email the invoice**: the subscription starts today, and Stripe emails an
+     invoice due in 14 days every billing period. They can pay by card or bank.
 
-Result on every invoice: Legacy $997.00, Founders discount −$200.00, **total $797.00/month**.
-Annual: $9,970.00, −$2,000.00, **total $7,970.00/year** ($664.17/month).
+Every invoice shows: Legacy $997.00, Founders 20% −$200.00, **total $797.00** (or $9,970.00,
+−$2,000.00, **$7,970.00** yearly). The discount is set to "forever", so the price stays locked in.
 
-Fixed amounts are used instead of "20% off" so the totals land on exactly $797 and $7,970.
-
----
-
-## Step 4: Bill Healer's House
-
-1. Customers → find (or add) Healer's House Family Church, with the billing email they want.
-2. **+ Create subscription** → product **Legacy (Church)** → choose the monthly or yearly price,
-   whichever they pick.
-3. **Add coupon** → `FOUNDERS_MONTHLY` or `FOUNDERS_ANNUAL` to match.
-4. **Payment**: choose "Email invoice to the customer" so they can pay by bank (ACH) or card.
-   After the first payment they can turn on auto-pay from the invoice page.
-5. Set the start date (for example, the 1st of next month) and **Create subscription**.
-
-If they switch from monthly to yearly later: open the subscription → **Update** → change the
+To switch them from monthly to yearly later: Stripe → the subscription → **Update** → change the
 price to `legacy_annual` and the coupon to `FOUNDERS_ANNUAL`. Stripe credits the unused month.
 
 ---
 
-## Step 5: Turn on the Customer Portal (upgrade, downgrade, cancel)
+## Step 4: Payment methods and emails (Stripe Dashboard)
 
-Settings → Billing → **Customer portal**:
+- Settings → Payments → Payment methods: turn on **ACH Direct Debit**. It costs 0.8% capped at
+  $5, which is much cheaper than cards on Legacy and yearly plans.
+- Settings → Billing → Subscriptions and emails: turn on renewal reminders for yearly plans,
+  failed-payment emails and **Smart Retries**.
+- Settings → Branding: TrueLink logo, brand color `#123a66`, accent `#f0821f`.
 
-- **Invoices**: show invoice history ✓
-- **Customer information**: allow updating email, billing address, tax ID ✓
-- **Payment methods**: allow updating ✓
-- **Subscriptions → Cancel**: allow ✓, "At end of billing period" (no refunds needed, matches
-  "cancel anytime"), ask for a cancellation reason ✓
-- **Subscriptions → Switch plans**: allow ✓, add all six products, and both monthly and
-  yearly prices. Set "Prorate charges and credits" for upgrades.
-  Tip: list the church plans and business plans in separate portal configurations if you don't
-  want a church switching to a business plan. To start, one configuration is fine.
-- **Business information**: privacy policy and terms links (truelinksolutions.com).
-- **Login link**: turn on **"Share a link to the portal"**. Copy that link.
-
-That login link lets any customer manage billing **today**, before the TrueLink dashboard
-exists: they enter their email, Stripe emails them a code, and they're in. Put it in your
-welcome email and the website footer as "Manage billing".
-
----
-
-## Step 6: Put sign-up buttons on the website (Payment Links)
-
-Payment Links → **+ New** → choose a product's price. For each of the 12 prices (6 plans ×
-monthly/yearly):
-
-- **After payment**: "Don't show confirmation page" → redirect to
-  `https://truelinksolutions.com/?welcome=1#book-call` (so new customers book their kickoff
-  call right away).
-- **Options**: collect the customer's phone number ✓, allow promotion codes ✓ (handy for
-  future specials), collect billing address ✓.
-- Optional: **Custom field** "Church or business name".
-
-Then paste each link into `web/src/components/pricing/data.js` under `CHECKOUT_LINKS`, for
-example:
-
-```js
-harvest: { monthly: 'https://buy.stripe.com/abc123', annual: 'https://buy.stripe.com/def456' },
-```
-
-Rebuild (`./build.sh`) and upload. Any plan with a link shows **"Get started with Harvest"**;
-plans without one keep **"Start with a free audit"**. You can switch on only some plans (for
-example, churches first) and leave the rest as free audits.
-
-Should every plan be self-serve? Most agencies at this price keep the top tier (Legacy,
-Partner) as "book a call first", because "starts at" pricing may change for bigger clients.
-Seed, Harvest, Essentials and Growth work well as instant sign-ups.
-
----
-
-## Step 7 (phase 2): The TrueLink customer dashboard
+## Step 5 (phase 2): The TrueLink customer dashboard
 
 Once the steps above are done, this is the plan for the branded login at
 `truelinksolutions.com/account` (built on the Supabase project you already use for HQ):

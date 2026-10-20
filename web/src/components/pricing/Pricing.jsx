@@ -1,10 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, ChevronDown, Church, Info, Minus, Store } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ANNUAL_MONTHS, CHECKOUT_LINKS, COMPARE, EVERY_PLAN, PLANS } from './data';
 import FeatureModal from './FeatureModal';
+import { getPlanLinks } from '@/lib/api';
 
 const fmt = (n) => Math.round(n).toLocaleString('en-US');
 const fadeUp = { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.55 } };
@@ -13,11 +14,12 @@ function goToAudit() {
   document.querySelector('#book-call')?.scrollIntoView({ behavior: 'smooth' });
 }
 
-function PlanCard({ plan, annual, onOpen }) {
+function PlanCard({ plan, annual, onOpen, liveLinks }) {
   const pop = plan.popular;
   const yearly = plan.monthly * ANNUAL_MONTHS;
   const shown = annual ? yearly / 12 : plan.monthly;
-  const link = CHECKOUT_LINKS[plan.id]?.[annual ? 'annual' : 'monthly'];
+  const period = annual ? 'annual' : 'monthly';
+  const link = liveLinks?.[plan.id]?.[period] || CHECKOUT_LINKS[plan.id]?.[period];
 
   return (
     <div
@@ -63,6 +65,11 @@ function PlanCard({ plan, annual, onOpen }) {
       >
         {link ? `Get started with ${plan.name}` : 'Start with a free audit'}
       </Button>
+      {link && (
+        <button onClick={goToAudit} className={cn('mt-2.5 text-sm underline underline-offset-4', pop ? 'text-white/70 hover:text-white' : 'text-slate-500 hover:text-navy-700')}>
+          Not sure yet? Book a free audit first
+        </button>
+      )}
 
       <div className={cn('mt-7 pt-6 border-t flex-1', pop ? 'border-white/15' : 'border-slate-100')}>
         {plan.everything && (
@@ -146,6 +153,8 @@ function Compare({ tab, tiers }) {
 export default function Pricing() {
   const [tab, setTab] = useState('church');
   const [annual, setAnnual] = useState(false);
+  const [liveLinks, setLiveLinks] = useState({});
+  useEffect(() => { getPlanLinks().then((r) => setLiveLinks(r.links)); }, []);
   const [feature, setFeature] = useState(null);
   const tiers = PLANS[tab];
   const close = useCallback(() => setFeature(null), []);
@@ -204,7 +213,7 @@ export default function Pricing() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-6 items-stretch max-w-6xl mx-auto">
           {tiers.map((t) => (
-            <PlanCard key={t.id} plan={t} annual={annual} onOpen={setFeature} />
+            <PlanCard key={t.id} plan={t} annual={annual} onOpen={setFeature} liveLinks={liveLinks} />
           ))}
         </div>
 

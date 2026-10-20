@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { opsAction, stripeAction, supabase } from '@/lib/supabase';
 import { dateTime } from '@/lib/format';
 import { PageHeader, Spinner } from '@/components/ui';
+import PlansCard from '@/components/PlansCard';
 
 function Check({ ok, title, children }) {
   return (
@@ -164,6 +165,8 @@ export default function Settings() {
           </div>
           <button className="btn btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
         </form>
+
+        <PlansCard status={status} onChanged={loadStatus} />
       </div>
     </>
   );

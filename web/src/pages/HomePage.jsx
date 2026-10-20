@@ -13,6 +13,7 @@ import BookCallSection from '@/components/BookCallSection.jsx';
 import { SITE } from '@/lib/site';
 import { cn } from '@/lib/utils';
 import { getTestimonials } from '@/lib/api';
+import { toast } from 'sonner';
 import Pricing from '@/components/pricing/Pricing.jsx';
 
 const fadeUp = {
@@ -180,6 +181,17 @@ function Testimonials({ items }) {
 const HomePage = () => {
   const [testimonials, setTestimonials] = useState([]);
   useEffect(() => { getTestimonials().then(setTestimonials); }, []);
+  useEffect(() => {
+    const plan = new URLSearchParams(window.location.search).get('welcome');
+    if (!plan) return;
+    const name = plan.charAt(0).toUpperCase() + plan.slice(1);
+    const t = setTimeout(() => toast.success(`Welcome to TrueLink ${name}! Your payment went through.`, {
+      description: 'Stripe emailed your receipt. Book your kickoff call below so we can start building.',
+      duration: 15000,
+    }), 400);
+    window.history.replaceState(null, '', window.location.pathname + window.location.hash);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <>

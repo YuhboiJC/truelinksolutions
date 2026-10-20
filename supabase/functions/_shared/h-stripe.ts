@@ -2,11 +2,23 @@
 import { admin, getSetting, requireAdmin, setSetting } from "./db.ts";
 import { json, preflight } from "./http.ts";
 import { makeStripe, stripeKey, upsertInvoice } from "./stripe.ts";
+import { publicPlanLinks, setupPlans, startFounders } from "./plans.ts";
 
 const WEBHOOK_EVENTS = [
   "invoice.created", "invoice.finalized", "invoice.sent", "invoice.updated", "invoice.paid",
   "invoice.payment_failed", "invoice.voided", "invoice.marked_uncollectible", "invoice.deleted",
 ] as const;
+
+/** Public (no login): Payment Link URLs for the website's plan buttons. */
+export async function handlePlans(req: Request): Promise<Response> {
+  const pre = preflight(req);
+  if (pre) return pre;
+  try {
+    return json(req, { ok: true, ...(await publicPlanLinks()) });
+  } catch {
+    return json(req, { ok: true, links: {}, portal: null });
+  }
+}
 
 export async function handleStripe(req: Request): Promise<Response> {
   const pre = preflight(req);
@@ -41,6 +53,7 @@ export async function handleStripe(req: Request): Promise<Response> {
       mode: key.startsWith("sk_live") || key.startsWith("rk_live") ? "live" : key ? "test" : null,
       webhook: !!(await getSetting("stripe_webhook_secret")),
       email: !!(Deno.env.get("RESEND_API_KEY") || await getSetting("resend_api_key")),
+      plans: (await publicPlanLinks()),
     });
   }
 
@@ -59,6 +72,18 @@ export async function handleStripe(req: Request): Promise<Response> {
       await setSetting("stripe_webhook_id", ep.id);
       await setSetting("stripe_webhook_secret", ep.secret!);
       return json(req, { ok: true });
+    }
+
+    if (action === "setup_plans") {
+      const r = await setupPlans(stripe);
+      return json(req, { ok: true, links: r.links, coupons: r.coupons, portal: r.portal, portal_error: r.portalError });
+    }
+
+    if (action === "start_founders") {
+      const period = body.period === "annual" ? "annual" : "monthly";
+      const method = body.method === "checkout" ? "checkout" : "invoice";
+      const r = await startFounders(stripe, String(body.contact_id ?? ""), period, method);
+      return json(req, { ok: true, ...r });
     }
 
     if (action === "create_invoice") {

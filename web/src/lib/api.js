@@ -48,3 +48,14 @@ export async function getTestimonials() {
     return [];
   }
 }
+
+/** Stripe Payment Links for each plan (set up in TrueLink HQ → Settings → Plans & payments). */
+export async function getPlanLinks() {
+  try {
+    const res = await fetch(`${FUNCTIONS_URL}/stripe/plans`);
+    const data = await res.json();
+    return data?.ok ? { links: data.links || {}, portal: data.portal || null } : { links: {}, portal: null };
+  } catch {
+    return { links: {}, portal: null };
+  }
+}
