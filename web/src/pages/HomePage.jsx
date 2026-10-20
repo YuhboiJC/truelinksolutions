@@ -13,6 +13,7 @@ import BookCallSection from '@/components/BookCallSection.jsx';
 import { SITE } from '@/lib/site';
 import { cn } from '@/lib/utils';
 import { getTestimonials } from '@/lib/api';
+import Pricing from '@/components/pricing/Pricing.jsx';
 
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
@@ -108,196 +109,18 @@ const STEPS = [
   { title: 'We manage and improve it', text: 'Every month we monitor, fix and fine-tune, and you get a simple report on calls answered, leads captured and hours saved.' },
 ];
 
-const PACKAGES = {
-  business: [
-    {
-      name: 'Essentials',
-      promise: 'Never lose another lead',
-      monthly: 297,
-      setup: '997',
-      features: [
-        'Missed-call text-back',
-        'Website chat assistant trained on your FAQs',
-        'Instant lead follow-up by text and email',
-        'Appointment reminders',
-        'Google review requests',
-        'Lead dashboard and monthly report',
-      ],
-    },
-    {
-      name: 'Growth',
-      promise: 'Your front office runs itself',
-      monthly: 697,
-      setup: '2,497',
-      popular: true,
-      features: [
-        'Everything in Essentials',
-        '24/7 AI phone receptionist that books appointments',
-        'Social media management (12 posts a month, 2 platforms)',
-        'Monthly email newsletter and follow-up sequences',
-        'New or refreshed 5-page website',
-        'Quarterly strategy call',
-      ],
-    },
-    {
-      name: 'Partner',
-      promise: 'Your own AI team, managed for you',
-      monthly: 1497,
-      setup: '4,997',
-      from: true,
-      features: [
-        'Everything in Growth',
-        '2 to 4 custom AI agents built around your workflows',
-        'Social media on 3 platforms with short video clips',
-        'Ongoing website updates',
-        'Monitoring, monthly improvements and priority support',
-        'Monthly strategy call',
-      ],
-    },
-  ],
-  church: [
-    {
-      name: 'Seed',
-      promise: 'No visitor or prayer request falls through the cracks',
-      monthly: 197,
-      setup: '697',
-      features: [
-        'Website assistant for service times, events and directions',
-        'First-time guest follow-up by text and email',
-        'Prayer request intake and routing',
-        'Event and volunteer reminders',
-        'Weekly announcements email',
-      ],
-    },
-    {
-      name: 'Harvest',
-      promise: "Sunday's message reaches people all week",
-      monthly: 497,
-      setup: '1,997',
-      popular: true,
-      features: [
-        'Everything in Seed',
-        'Sermon to content: weekly posts, sermon notes and newsletter',
-        'Facebook and Instagram scheduling',
-        'YouTube titles and descriptions written every week',
-        'New or refreshed church website',
-      ],
-    },
-    {
-      name: 'Legacy',
-      promise: 'A full tech team, without the payroll',
-      monthly: 997,
-      setup: '3,997',
-      from: true,
-      features: [
-        'Everything in Harvest',
-        'Livestream setup and support',
-        'Custom AI agents (knowledge assistant, appointment scheduling)',
-        'Full website management and online giving setup',
-        'Pastor dashboard',
-        'Monthly strategy call',
-      ],
-    },
-  ],
-};
-
 const FAQS = [
   { q: 'Do I need to be good with technology?', a: "No. We set everything up, explain it in plain English, and manage it for you. If you can read a text message, you can use what we build." },
   { q: 'Will AI say something wrong to my customers?', a: 'Your assistant only answers from information you approve, and it hands tricky questions to a real person. You decide whether posts and emails wait for your OK or go out automatically, and you can change that any time.' },
   { q: 'Who owns my website, content and contacts?', a: 'You do. Your website, domain, content and customer list are yours, in writing. If you ever leave, you take them with you.' },
-  { q: 'Is there a long contract?', a: 'Plans have a 3-month minimum so we can get everything working well, then they are month to month. Cancel any time after that.' },
-  { q: 'What does the monthly fee cover?', a: 'Hosting, the tools themselves, monitoring, fixes, updates, the work included in your plan, and a simple monthly report. No surprise invoices.' },
+  { q: 'Is there a long contract or a setup fee?', a: 'No to both. There are no setup or build fees, and every plan is month to month. Cancel any time and you will not be charged again.' },
+  { q: 'Can I change or cancel my plan later?', a: 'Yes. Upgrade, downgrade or cancel from your TrueLink account whenever you like. Upgrades start right away, and a cancellation takes effect at the end of the period you already paid for.' },
+  { q: 'How does annual billing work?', a: 'Pay for the year up front and you get two months free, so you pay for 10 months and get 12.' },
+  { q: 'What does the monthly fee cover?', a: 'The build, hosting, the tools themselves, monitoring, fixes, updates, the work included in your plan, and a simple monthly report. No surprise invoices.' },
+  { q: 'Can I call you any time I need help?', a: 'You will always reach a real person, and questions are answered within one business day (same day for urgent issues, and same business day on Legacy and Partner). Plans include a set amount of training and website updates, so support is for questions and fixes rather than a daily on-call help line. On Legacy and Partner we simply run things for you.' },
   { q: 'Can you work with the tools I already use?', a: "Usually, yes. We connect to common calendars, email, phone systems, Facebook, Instagram, YouTube and church platforms. We'll check yours on the free audit." },
   { q: 'Do you only work with churches and businesses in Southwest Florida?', a: "No. We started in Port Charlotte and still meet local clients in person, from Venice to Fort Myers. We're growing across Florida and work with clients anywhere over video calls." },
 ];
-
-const fmt = (n) => n.toLocaleString('en-US');
-
-function Pricing() {
-  const [tab, setTab] = useState('business');
-  const tiers = PACKAGES[tab];
-  return (
-    <section id="packages" className="scroll-mt-24 py-24 md:py-28 bg-slate-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div {...fadeUp} className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-4">Packages</h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Simple monthly plans that pay for themselves. One-time setup covers the build; the monthly fee covers the tools, the management and the improvements.
-          </p>
-        </motion.div>
-
-        <div className="flex justify-center mb-10">
-          <div className="inline-flex rounded-full bg-white p-1 shadow-sm border border-slate-200" role="tablist">
-            {[
-              { id: 'business', label: 'For businesses', icon: Store },
-              { id: 'church', label: 'For churches', icon: Church },
-            ].map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                role="tab"
-                aria-selected={tab === id}
-                onClick={() => setTab(id)}
-                className={cn(
-                  'flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors',
-                  tab === id ? 'bg-navy-600 text-white' : 'text-navy-700 hover:bg-slate-100',
-                )}
-              >
-                <Icon className="w-4 h-4" />
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-          {tiers.map((t) => (
-            <div
-              key={t.name}
-              className={cn(
-                'relative flex flex-col rounded-2xl bg-white p-8 border',
-                t.popular ? 'border-orange-400 shadow-xl lg:-translate-y-2' : 'border-slate-200 shadow-sm',
-              )}
-            >
-              {t.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-orange-500 px-3 py-1 text-xs font-semibold text-white">
-                  Most popular
-                </span>
-              )}
-              <h3 className="text-xl font-bold text-navy-900">{t.name}</h3>
-              <p className="text-slate-600 mt-1 min-h-12">{t.promise}</p>
-              <p className="mt-5">
-                {t.from && <span className="text-sm text-slate-500 mr-1">from</span>}
-                <span className="text-4xl font-bold text-navy-900">${fmt(t.monthly)}</span>
-                <span className="text-slate-500">/month</span>
-              </p>
-              <p className="text-sm text-slate-500 mt-1">{t.from ? 'Setup from' : 'Plus'} ${t.setup} one-time setup</p>
-              <ul className="mt-6 space-y-3 flex-1">
-                {t.features.map((f) => (
-                  <li key={f} className="flex gap-2.5 text-slate-700 text-sm leading-relaxed">
-                    <Check className="w-5 h-5 text-orange-500 shrink-0" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button
-                variant={t.popular ? 'accent' : 'outline'}
-                className="mt-8 w-full"
-                onClick={() => scrollToSection('#book-call')}
-              >
-                Start with a free audit
-              </Button>
-            </div>
-          ))}
-        </div>
-
-        <p className="text-center text-sm text-slate-500 mt-8 max-w-2xl mx-auto">
-          Not sure which fits? That's what the free audit is for. We also build websites on their own (from $1,500) and
-          offer social media management by itself (from $500/month).
-        </p>
-      </div>
-    </section>
-  );
-}
 
 function Faq() {
   const [open, setOpen] = useState(0);
@@ -618,7 +441,7 @@ const HomePage = () => {
                 { title: 'You own your stuff', text: 'Your website, domain, content and contact list belong to you, in writing.' },
                 { title: 'A real person, not a call center', text: 'You work directly with the founder. We started in Port Charlotte and are growing across Florida, by phone, text, email, video or in person.' },
                 { title: 'Fast replies', text: 'Questions answered within one business day, and urgent issues the same day.' },
-                { title: 'No long contracts', text: 'A 3-month minimum to get everything working well, then month to month.' },
+                { title: 'No contracts, no setup fees', text: 'Month to month from day one. Cancel any time from your account.' },
               ].map(({ title, text }, i) => (
                 <motion.div key={title} {...fadeUp} transition={{ duration: 0.5, delay: i * 0.05 }} className="rounded-2xl border border-slate-200 p-6">
                   <Check className="w-6 h-6 text-orange-500 mb-3" />
