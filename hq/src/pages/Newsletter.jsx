@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BarChart3, ExternalLink, Newspaper, RefreshCw, Send, Upload } from 'lucide-react';
+import { BarChart3, ExternalLink, Inbox, Newspaper, RefreshCw, Send, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { newsletterAction, supabase } from '@/lib/supabase';
 import { Badge, Empty, PageHeader, Spinner } from '@/components/ui';
@@ -86,6 +86,18 @@ export default function Newsletter() {
           <RefreshCw className={`w-4 h-4 ${busy === 'check' ? 'animate-spin' : ''}`} />Check Substack now
         </button>
       </PageHeader>
+
+      <div className="card p-4 mb-6 flex flex-col sm:flex-row sm:items-center gap-3 border-l-4 border-l-navy-500">
+        <Inbox className="w-6 h-6 text-navy-500 shrink-0" />
+        <div className="flex-1 text-sm">
+          <p className="font-semibold text-navy-900">Business inbox: <a className="text-navy-600 underline" href="mailto:info@truelinksolutions.com">info@truelinksolutions.com</a></p>
+          <p className="text-slate-600 mt-0.5">
+            Use this one address for newsletters (issues go out from it and replies come back to it), service tickets and support
+            requests from customers, and all other TrueLink business email. Check it daily.
+          </p>
+        </div>
+        <a className="btn btn-outline shrink-0" href="https://mail.hostinger.com" target="_blank" rel="noreferrer"><ExternalLink className="w-4 h-4" />Open inbox</a>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <div className="card p-4">

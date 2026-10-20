@@ -137,11 +137,24 @@ export default function PlansCard({ status, onChanged }) {
       )}
 
       <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50/60 p-4">
-        <h3 className="font-semibold text-navy-900">Founders pricing (Legacy, 20% off for life)</h3>
-        <p className="text-sm text-slate-600 mt-1">
-          Monthly: $997.00 − $200.00 = <b>$797.00/month</b>. Yearly: $9,970.00 − $2,000.00 = <b>$7,970.00/year</b>
-          {' '}($797 × 10 months, 2 months free). Invoices show the regular price and the Founders discount on separate lines.
-        </p>
+        <h3 className="font-semibold text-navy-900">Founders pricing (Legacy, locked in for life)</h3>
+        <div className="grid sm:grid-cols-2 gap-3 mt-3">
+          {[
+            ['Monthly', '$997.00', '−$200.00 a month', '$797.00 / month'],
+            ['Yearly (2 months free)', '$9,970.00', '−$2,000.00 a year', '$7,970.00 / year'],
+          ].map(([label, regular, amount, total]) => (
+            <div key={label} className="rounded-lg bg-white border border-slate-200 p-3 text-sm">
+              <p className="font-medium text-navy-900 mb-1.5">{label}</p>
+              <div className="flex justify-between text-slate-500"><span>Legacy</span><span>{regular}</span></div>
+              <div className="flex justify-between items-start mt-1">
+                <span className="text-slate-500">Founders discount</span>
+                <span className="text-right leading-tight"><b className="text-emerald-700">20% off</b><br /><span className="text-xs text-slate-500">{amount}</span></span>
+              </div>
+              <div className="flex justify-between font-semibold text-navy-900 border-t border-slate-100 mt-2 pt-2"><span>They pay</span><span>{total}</span></div>
+            </div>
+          ))}
+        </div>
+        <p className="text-xs text-slate-500 mt-2">Stripe invoices show the regular price, then &ldquo;Founders discount (20% off)&rdquo; with the amount on the line below.</p>
         <div className="grid sm:grid-cols-[1fr_auto] gap-3 mt-4 items-end">
           <div>
             <label className="label" htmlFor="founders-contact">Customer</label>

@@ -8,6 +8,7 @@ import ContactForm from '@/components/ContactForm';
 import InvoiceForm from '@/components/InvoiceForm';
 import ServiceForm from '@/components/ServiceForm';
 import ServiceRows from '@/components/ServiceRows';
+import LeadResearch from '@/components/LeadResearch';
 import { CATEGORY, perMonth } from '@/lib/services';
 import { Empty, InvoiceBadge, Spinner, StatusBadge } from '@/components/ui';
 
@@ -101,7 +102,7 @@ export default function ContactDetail() {
             <h1 className="text-2xl font-bold truncate">{displayName(c)}</h1>
             <StatusBadge status={c.status} />
           </div>
-          {c.business_name && c.name && <p className="text-slate-600">{c.business_name}</p>}
+          {c.business_name && c.name && <p className="text-slate-600">{c.business_name}{c.city ? ` · ${c.city}` : ''}</p>}
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm text-slate-500">
             {c.email && <a href={`mailto:${c.email}`} className="inline-flex items-center gap-1 hover:text-orange-600"><Mail className="w-4 h-4" />{c.email}</a>}
             {c.phone && <a href={`tel:${c.phone}`} className="inline-flex items-center gap-1 hover:text-orange-600"><Phone className="w-4 h-4" />{c.phone}</a>}
@@ -158,6 +159,7 @@ export default function ContactDetail() {
         </div>
 
         <div className="lg:col-span-2 space-y-6">
+          {['lead', 'prospect', 'lost'].includes(c.status) || c.source === 'ai_agent' ? <LeadResearch contactId={id} onUpdated={load} /> : null}
           <section className="card overflow-hidden">
             <div className="flex items-center justify-between px-5 pt-4 pb-3">
               <div>

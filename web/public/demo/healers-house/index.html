@@ -67,6 +67,8 @@ h2 { font: 600 15px/1.3 var(--sans); margin: 0; }
 #plan[data-billing="monthly"] .bill-annual, #plan[data-billing="annual"] .bill-monthly { display: none; }
 .was { color: var(--soft); }
 .save { color: var(--good); font-weight: 600; }
+.disc { display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.25; }
+.disc small { color: var(--soft); font-size: 12px; }
 .pill { display: inline-block; font-size: 11.5px; font-weight: 500; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
 .pill.ok { background: var(--good-tint); color: var(--good); }
 .pill.wait { background: var(--warn-tint); color: var(--warn); }
@@ -438,13 +440,13 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
           </div>
           <div class="list bill-monthly">
             <div><span>Legacy plan</span><span class="was">$997.00 / month</span></div>
-            <div><span>Founders discount (20%)</span><span class="save">&minus;$200.00</span></div>
+            <div><span>Founders discount</span><span class="disc"><b class="save">20% off</b><small>&minus;$200.00 a month</small></span></div>
             <div><span><b>You pay</b></span><b>$797.00 / month</b></div>
             <div><span>Price locked in</span><span class="pill ok">For as long as you stay</span></div>
           </div>
           <div class="list bill-annual">
             <div><span>Legacy plan, yearly (2 months free)</span><span class="was">$9,970.00 / year</span></div>
-            <div><span>Founders discount (20%)</span><span class="save">&minus;$2,000.00</span></div>
+            <div><span>Founders discount</span><span class="disc"><b class="save">20% off</b><small>&minus;$2,000.00 a year</small></span></div>
             <div><span><b>You pay</b></span><b>$7,970.00 / year</b></div>
             <div><span>Works out to</span><b>$664.17 / month</b></div>
             <div><span>You save vs. monthly</span><span class="save">$1,594.00 a year</span></div>
@@ -464,11 +466,11 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
         <div class="tbl"><table>
           <thead><tr><th>Invoice</th><th>Date</th><th class="n">Regular</th><th class="n">Founders discount</th><th class="n">Amount</th><th>Status</th></tr></thead>
           <tbody class="bill-monthly">
-            <tr><td>Legacy plan, monthly (Founders)</td><td>Dec 1 (example)</td><td class="n">$997.00</td><td class="n">&minus;$200.00</td><td class="n"><b>$797.00</b></td><td><span class="pill soon">Upcoming</span></td></tr>
-            <tr><td>Legacy plan, monthly (Founders)</td><td>Nov 1 (example)</td><td class="n">$997.00</td><td class="n">&minus;$200.00</td><td class="n"><b>$797.00</b></td><td><span class="pill wait">Due</span></td></tr>
+            <tr><td>Legacy plan, monthly (Founders)</td><td>Dec 1 (example)</td><td class="n">$997.00</td><td class="n"><span class="disc"><b class="save">20% off</b><small>&minus;$200.00</small></span></td><td class="n"><b>$797.00</b></td><td><span class="pill soon">Upcoming</span></td></tr>
+            <tr><td>Legacy plan, monthly (Founders)</td><td>Nov 1 (example)</td><td class="n">$997.00</td><td class="n"><span class="disc"><b class="save">20% off</b><small>&minus;$200.00</small></span></td><td class="n"><b>$797.00</b></td><td><span class="pill wait">Due</span></td></tr>
           </tbody>
           <tbody class="bill-annual">
-            <tr><td>Legacy plan, yearly (Founders)</td><td>Nov 1 (example)</td><td class="n">$9,970.00</td><td class="n">&minus;$2,000.00</td><td class="n"><b>$7,970.00</b></td><td><span class="pill wait">Due</span></td></tr>
+            <tr><td>Legacy plan, yearly (Founders)</td><td>Nov 1 (example)</td><td class="n">$9,970.00</td><td class="n"><span class="disc"><b class="save">20% off</b><small>&minus;$2,000.00</small></span></td><td class="n"><b>$7,970.00</b></td><td><span class="pill wait">Due</span></td></tr>
           </tbody>
         </table></div>
         <p class="note" style="margin:0">Sample invoices. Your real invoices appear here once billing starts, and Stripe emails a receipt for each payment.</p>

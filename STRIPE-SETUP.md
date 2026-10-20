@@ -91,8 +91,8 @@ Same card in HQ → **Founders pricing**. Healer's House is pre-selected.
    - **Start now and email the invoice**: the subscription starts today, and Stripe emails an
      invoice due in 14 days every billing period. They can pay by card or bank.
 
-Every invoice shows: Legacy $997.00, Founders 20% −$200.00, **total $797.00** (or $9,970.00,
-−$2,000.00, **$7,970.00** yearly). The discount is set to "forever", so the price stays locked in.
+Every invoice shows: Legacy $997.00, then **Founders discount (20% off)** with −$200.00 on the line
+below, **total $797.00** (yearly: $9,970.00, Founders discount (20% off) −$2,000.00, **$7,970.00**). The discount is set to "forever", so the price stays locked in.
 
 To switch them from monthly to yearly later: Stripe → the subscription → **Update** → change the
 price to `legacy_annual` and the coupon to `FOUNDERS_ANNUAL`. Stripe credits the unused month.

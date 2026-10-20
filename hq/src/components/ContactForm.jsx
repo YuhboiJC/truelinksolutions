@@ -17,11 +17,12 @@ export default function ContactForm({ contact, onClose, onSaved }) {
 
   const save = async (e) => {
     e.preventDefault();
-    if (!form.email.includes('@')) return toast.error('A valid email is required');
+    if (form.email.trim() && !form.email.includes('@')) return toast.error('That email doesn\'t look right');
+    if (!form.email.trim() && !form.name.trim() && !form.business_name.trim()) return toast.error('Add a name, church/business name or email');
     setSaving(true);
     const row = {
       ...form,
-      email: form.email.trim().toLowerCase(),
+      email: form.email.trim().toLowerCase() || null,
       estimated_value: form.estimated_value === '' ? null : Number(form.estimated_value),
       next_follow_up: form.next_follow_up || null,
       tags: form.tags.split(',').map((t) => t.trim()).filter(Boolean),
@@ -42,7 +43,7 @@ export default function ContactForm({ contact, onClose, onSaved }) {
     <Modal title={editing ? 'Edit contact' : 'New contact'} onClose={onClose} wide>
       <form onSubmit={save} className="grid sm:grid-cols-2 gap-4">
         <div><label className="label">Name</label><input className="input" value={form.name} onChange={set('name')} autoFocus /></div>
-        <div><label className="label">Email *</label><input className="input" type="email" value={form.email} onChange={set('email')} required /></div>
+        <div><label className="label">Email</label><input className="input" type="email" value={form.email} onChange={set('email')} /></div>
         <div><label className="label">Phone</label><input className="input" value={form.phone} onChange={set('phone')} /></div>
         <div><label className="label">Business</label><input className="input" value={form.business_name} onChange={set('business_name')} /></div>
         <div><label className="label">Website</label><input className="input" value={form.website} onChange={set('website')} placeholder="example.com" /></div>

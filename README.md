@@ -60,3 +60,17 @@ cd hq  && npm install && npm run dev   # dashboard on :5174
   anyone in `substack_subscribers` (uploaded from Substack's subscriber export in HQ → Newsletter).
 - `newsletter_sends` records who got what, so a send that hits the daily email limit simply resumes next hour.
 - Resend free plan: 100 emails/day, 3,000/month. Upgrade to Pro once the list is near 100 people.
+
+## AI lead finder (HQ → Pipeline → Find leads with AI)
+
+- `lead-agent` edge function + `lead_jobs` / `lead_research` tables. Uses Claude (`claude-sonnet-5-5`) with web search.
+- Step 1 finds leads and adds them to `contacts` (source `ai_agent`, status `lead`). Step 2 researches each one:
+  decision makers, gaps, recommended plan, 3-stage sales script, outreach drafts, brief, and a demo-build prompt.
+- `pg_cron` job `truelink-lead-agent` calls `lead-agent/tick` every minute while there's work, so it keeps going
+  after the browser closes. The Anthropic API key is stored server-only in `app_settings` (HQ → Settings).
+
+## Tools & platforms (HQ → Settings)
+
+TrueLink's own accounts are rows in `services` with `contact_id` null, plus billing fields
+(`payment_method`, `payment_connected`, `last_paid_on`, `login_email`, `who_can_access`). They also appear in the
+daily renewal email. Team access (who can sign in) is the `admins` table, managed in Settings.

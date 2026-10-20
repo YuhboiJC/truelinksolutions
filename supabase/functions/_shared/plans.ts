@@ -22,11 +22,13 @@ export const PLANS = [
     description: "Everything in Growth, plus 2 to 4 custom AI agents, social media on 3 platforms, full website management, a branded dashboard, monthly strategy calls and priority support." },
 ] as const;
 
-// Founders pricing: 20% off Legacy, forever. Fixed amounts so the totals land
-// exactly on $797/month and $7,970/year.
+// Founders pricing: 20% off Legacy, forever. Invoices show the coupon name
+// ("Founders discount (20% off)") with the dollar amount on the line below it.
+// Fixed amounts so the totals land exactly on $797/month and $7,970/year
+// (a true 20% of $997 is $199.40, which would make it $797.60).
 export const FOUNDERS = {
-  monthly: { coupon: "FOUNDERS_MONTHLY", name: "Founders 20% (monthly)", amount_off: 200_00, lookup: "legacy_monthly" },
-  annual: { coupon: "FOUNDERS_ANNUAL", name: "Founders 20% (annual)", amount_off: 2_000_00, lookup: "legacy_annual" },
+  monthly: { coupon: "FOUNDERS_MONTHLY", name: "Founders discount (20% off)", amount_off: 200_00, lookup: "legacy_monthly" },
+  annual: { coupon: "FOUNDERS_ANNUAL", name: "Founders discount (20% off, yearly)", amount_off: 2_000_00, lookup: "legacy_annual" },
 } as const;
 
 type Period = "monthly" | "annual";
@@ -86,7 +88,11 @@ async function ensureCoupons(stripe: Stripe, legacyProduct: string) {
   const out: Record<string, string> = {};
   for (const f of Object.values(FOUNDERS)) {
     const c = await stripe.coupons.retrieve(f.coupon).catch(() => null);
-    if (c && c.valid) { out[f.coupon] = c.id; continue; }
+    if (c && c.valid) {
+      if (c.name !== f.name) await stripe.coupons.update(c.id, { name: f.name }).catch(() => {});
+      out[f.coupon] = c.id;
+      continue;
+    }
     const made = await stripe.coupons.create({
       id: f.coupon,
       name: f.name,

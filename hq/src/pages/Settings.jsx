@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle2, CircleAlert } from 'lucide-react';
 import { toast } from 'sonner';
-import { opsAction, stripeAction, supabase } from '@/lib/supabase';
+import { leadAgentAction, opsAction, stripeAction, supabase } from '@/lib/supabase';
 import { dateTime } from '@/lib/format';
 import { PageHeader, Spinner } from '@/components/ui';
 import PlansCard from '@/components/PlansCard';
+import ToolsCard from '@/components/ToolsCard';
+import TeamCard from '@/components/TeamCard';
 
 function Check({ ok, title, children }) {
   return (
@@ -63,8 +65,27 @@ export default function Settings() {
   };
 
   const loadStatus = () => stripeAction('status').then(setStatus).catch((e) => setStatus({ error: e.message }));
+  const [ai, setAi] = useState(null);
+  const [aiKey, setAiKey] = useState('');
+  const [savingAi, setSavingAi] = useState(false);
+  const loadAi = () => leadAgentAction('status').then((r) => setAi(r.connected)).catch(() => setAi(false));
+  const saveAi = async (e) => {
+    e.preventDefault();
+    setSavingAi(true);
+    try {
+      await leadAgentAction('save_key', { key: aiKey });
+      setAiKey('');
+      toast.success('AI lead finder connected');
+      loadAi();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setSavingAi(false);
+    }
+  };
   useEffect(() => {
     loadOps();
+    loadAi();
     supabase.from('business_profile').select('*').single().then(({ data }) => setProfile(data));
     loadStatus();
   }, []);
@@ -134,6 +155,15 @@ export default function Settings() {
               {status.webhook && (
                 <div className="py-3"><button className="btn btn-outline" onClick={connectWebhook} disabled={connecting}>Reconnect payment sync</button></div>
               )}
+              <Check ok={!!ai} title="AI lead finder (Claude)">
+                {ai ? <p>Connected. Use &ldquo;Find leads with AI&rdquo; on the Pipeline page.</p> : (
+                  <form onSubmit={saveAi} className="mt-1 space-y-2">
+                    <p>Create a key at <a className="underline" href="https://console.anthropic.com/settings/keys" target="_blank" rel="noreferrer">console.anthropic.com → API keys</a> and paste it here. Set a monthly spend limit there too.</p>
+                    <input className="input font-mono" type="password" autoComplete="off" placeholder="sk-ant-…" value={aiKey} onChange={(e) => setAiKey(e.target.value)} />
+                    <button className="btn btn-navy" disabled={savingAi || !aiKey.trim()}>{savingAi ? 'Checking…' : 'Connect'}</button>
+                  </form>
+                )}
+              </Check>
               <Check ok={!!ops?.hostinger} title="Hostinger (hosting + domains)">
                 {ops?.hostinger ? (
                   <p>Renewal dates and prices sync into Services every morning{ops.last_sync ? ` (last: ${dateTime(ops.last_sync)})` : ''}.</p>
@@ -166,6 +196,8 @@ export default function Settings() {
           <button className="btn btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
         </form>
 
+        <TeamCard />
+        <ToolsCard />
         <PlansCard status={status} onChanged={loadStatus} />
       </div>
     </>
